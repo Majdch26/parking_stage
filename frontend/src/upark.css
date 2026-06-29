@@ -398,16 +398,6 @@
      background: var(--bg-card);  /* #D6E8EE */
      border: 1px solid var(--border-light);
    }
-   .upk-lot::before {
-     content: '';
-     position: absolute;
-     left: 50%;
-     top: 12px;
-     bottom: 12px;
-     width: 0;
-     border-left: 3px dashed rgba(2, 69, 122, 0.12);
-     transform: translateX(-50%);
-   }
    .upk-lot-grid {
      display: grid;
      grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
@@ -435,9 +425,10 @@
    .upk-bay:disabled { cursor: not-allowed; }
    .upk-bay .upk-bay-num {
      font-family: var(--upk-font-mono);
-     font-size: 8px;
+     font-size: 10.5px;
+     font-weight: 700;
      color: var(--text-muted);
-     letter-spacing: 0.04em;
+     letter-spacing: 0.02em;
    }
    .upk-bay svg { width: 55%; height: 55%; }
    
@@ -464,7 +455,7 @@
    }
    
    @media (max-width: 480px) {
-     .upk-lot-grid { grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); }
+     .upk-lot-grid { grid-template-columns: repeat(5, 1fr); gap: 7px; }
    }
 
    /* ===== Bandeau d'accueil (Welcome banner) – même couleur que la sidebar ===== */
@@ -891,7 +882,7 @@
 
     /* Mini-map */
     .upk-lot-grid {
-      grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+      grid-template-columns: repeat(6, 1fr);
     }
 
     /* Bandeaux */
@@ -997,18 +988,19 @@
       gap: 6px !important;
     }
     .upk-lot-grid {
-      grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)) !important;
-      gap: 6px !important;
+      grid-template-columns: repeat(5, 1fr) !important;
+      gap: 7px !important;
     }
     .upk-bay {
-      aspect-ratio: 0.8 !important;
+      aspect-ratio: 0.85 !important;
     }
     .upk-bay .upk-bay-num {
-      font-size: 6px !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
     }
     .upk-bay svg {
-      width: 40% !important;
-      height: 40% !important;
+      width: 48% !important;
+      height: 48% !important;
     }
   
     /* Cartes */

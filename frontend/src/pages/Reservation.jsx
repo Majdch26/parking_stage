@@ -4,7 +4,6 @@ import { Container, Form, Input } from "reactstrap";
 import { CalendarCheck } from "lucide-react";
 import axiosClient from "../api/axiosClient";
 import SlotMap from "../components/SlotMap";
-import SessionGate from "./SessionGate";
 import AppLayout from "../components/AppLayout";
 import "../upark.css";
 
@@ -427,9 +426,7 @@ function ReservationContent() {
 export default function Reservation() {
   return (
     <AppLayout>
-      <SessionGate>
         <ReservationContent />
-      </SessionGate>
     </AppLayout>
   );
 }

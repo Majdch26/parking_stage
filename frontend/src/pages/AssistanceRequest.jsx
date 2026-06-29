@@ -5,16 +5,15 @@ import { Container } from "reactstrap";
 import { LifeBuoy } from "lucide-react";
 import axiosClient from "../api/axiosClient";
 import SlotMap from "../components/SlotMap";
-import SessionGate from "./SessionGate";
 import AppLayout from "../components/AppLayout";
 import "../upark.css";
 
 const HELP_TYPES = [
-  { value: "parking_help", label: "Aide au stationnement" },
+  { value: "parking_help", label: "Parking help" },
   { value: "accident", label: "Accident" },
-  { value: "security_issue", label: "Problème de sécurité" },
-  { value: "car_problem", label: "Problème de voiture" },
-  { value: "other", label: "Autre" },
+  { value: "security_issue", label: "Security issue" },
+  { value: "car_problem", label: "Car problem" },
+  { value: "other", label: "Other" },
 ];
 
 function AssistanceRequestContent() {
@@ -52,15 +51,15 @@ function AssistanceRequestContent() {
     setSuccess(false);
 
     if (!slotId) {
-      setError("Choisis ta place sur le plan.");
+      setError("Please select your spot on the map.");
       return;
     }
     if (!requestType) {
-      setError("Choisis un type d'aide.");
+      setError("Please select a type of help.");
       return;
     }
     if (requestType === "other" && !details.trim()) {
-      setError("Décris ton problème dans le champ \"Autre\".");
+      setError("Please describe your issue in the 'Other' field.");
       return;
     }
 
@@ -76,7 +75,7 @@ function AssistanceRequestContent() {
       setSlotId("");
       setSlotNumber("");
     } catch (err) {
-      setError(err.response?.data?.message || "Erreur lors de l'envoi de la demande.");
+      setError(err.response?.data?.message || "Error sending request.");
     }
   };
 
@@ -167,7 +166,7 @@ function AssistanceRequestContent() {
               required
               style={{ borderRadius: "12px", border: "1px solid #e3e7f0" }}
             >
-              <option value="">-- Choisir --</option>
+              <option value="">-- Select --</option>
               {HELP_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>
               ))}
@@ -199,9 +198,7 @@ function AssistanceRequestContent() {
 export default function AssistanceRequest() {
   return (
     <AppLayout>
-      <SessionGate>
-        <AssistanceRequestContent />
-      </SessionGate>
+      <AssistanceRequestContent />
     </AppLayout>
   );
 }
