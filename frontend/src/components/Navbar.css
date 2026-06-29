@@ -177,162 +177,276 @@
   white-space: nowrap;
 }
 
-/* ===== RESPONSIVE : sur mobile, la sidebar passe en barre inférieure ===== */
+/* ================================================================
+   RESPONSIVE — TABLETTE : sidebar rétrécie, icônes seules
+   ================================================================ */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .app-shell {
+    margin-left: 76px;
+  }
+
+  .sidebar {
+    width: 76px;
+    padding: 20px 10px;
+    align-items: center;
+  }
+
+  .sidebar .logo {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .sidebar .logo .logo-text {
+    display: none;
+  }
+
+  .sidebar .nav a .nav-label,
+  .sidebar .bottom .logout-label {
+    display: none;
+  }
+
+  .sidebar .nav a,
+  .sidebar .nav-bell button {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .sidebar .nav a.active::before {
+    left: -10px;
+  }
+
+  .sidebar .bottom {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sidebar .bottom .logout {
+    padding: 8px;
+  }
+}
+
+/* ================================================================
+   RESPONSIVE — MOBILE : barre de navigation inférieure
+   Refonte complète : pas de scroll forcé, grille équilibrée,
+   priorité visuelle claire, sécurité des zones tactiles (iOS notch).
+   ================================================================ */
 @media (max-width: 768px) {
   .app-shell {
     margin-left: 0;
-    margin-bottom: 68px;
+    margin-bottom: calc(64px + env(safe-area-inset-bottom));
   }
 
   .sidebar {
     width: 100%;
-    height: 68px;
+    height: auto;
     top: auto;
     bottom: 0;
     left: 0;
+    right: 0;
     flex-direction: row;
-    align-items: center;
-    padding: 0 8px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.12);
+    align-items: stretch;
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    overflow: visible;
+    box-shadow: 0 -8px 24px rgba(2, 18, 43, 0.18);
     border-right: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     background: #02457A;
     justify-content: space-between;
+    gap: 0;
   }
 
-  /* Masquer le logo sur mobile */
+  /* Le logo disparaît sur mobile : la place est précieuse */
   .sidebar .logo {
     display: none;
   }
 
-  /* Navigation en ligne */
+  /* La nav devient une rangée scrollable horizontalement,
+     avec un masque en fondu pour indiquer qu'on peut glisser */
   .sidebar .nav {
     flex-direction: row;
     flex: 1;
-    gap: 2px;
-    align-items: center;
+    gap: 0;
+    align-items: stretch;
     overflow-x: auto;
-    padding: 0 4px;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    height: 64px;
+    padding: 0 2px;
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 14px,
+      black calc(100% - 14px),
+      transparent 100%
+    );
+  }
+
+  .sidebar .nav::-webkit-scrollbar {
+    display: none;
   }
 
   .sidebar .nav a,
   .sidebar .nav-bell button {
     flex-direction: column;
-    gap: 2px;
-    padding: 6px 10px;
-    font-size: 10px;
-    border-radius: 8px;
-    min-width: 48px;
+    gap: 3px;
+    padding: 8px 4px 6px;
+    font-size: 10.5px;
+    font-weight: 600;
+    border-radius: 0;
+    min-width: 60px;
     align-items: center;
     justify-content: center;
+    scroll-snap-align: center;
+    flex-shrink: 0;
   }
 
-  /* Masquer le texte des liens */
   .sidebar .nav a .nav-label {
-    display: none;
+    display: block;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+    flex: none;
   }
 
-  /* Afficher seulement l'icône */
   .sidebar .nav a svg {
-    width: 22px;
-    height: 22px;
+    width: 21px;
+    height: 21px;
     margin: 0;
+    transition: transform 0.18s ease;
   }
 
-  /* Indicateur actif : remplacer la barre latérale par une pastille en bas */
+  .sidebar .nav a:hover,
+  .sidebar .nav-bell button:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  /* Indicateur actif : pastille pleine au lieu de la barre verticale */
+  .sidebar .nav a.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
+  }
+
+  .sidebar .nav a.active svg {
+    transform: translateY(-1px);
+  }
+
   .sidebar .nav a.active::before {
     left: 50%;
-    top: auto;
-    bottom: -4px;
+    top: 4px;
+    bottom: auto;
     transform: translateX(-50%);
-    width: 18px;
+    width: 22px;
     height: 3px;
     border-radius: 3px;
     background: #018ABE;
-    box-shadow: 0 0 12px rgba(1, 138, 190, 0.6);
+    box-shadow: 0 0 10px rgba(1, 138, 190, 0.7);
   }
 
-  .sidebar .nav a.active {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  /* Cloche de notification intégrée à la barre */
+  /* Cloche de notification : groupe fixe, ne défile pas avec le reste */
   .sidebar .nav-bell {
-    margin-top: 0;
-    padding-top: 0;
+    margin: 0;
+    padding: 0 6px;
     border-top: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    padding-left: 8px;
-    margin-left: 4px;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: 64px;
   }
 
   .sidebar .nav-bell button {
-    padding: 6px 8px;
+    padding: 8px;
     min-width: auto;
+    border-radius: 12px;
   }
 
-  /* Pied de sidebar : avatar + déconnexion (sans texte) */
+  /* Pied de sidebar : avatar + déconnexion, toujours visibles à droite */
   .sidebar .bottom {
     margin-top: 0;
     flex-direction: row;
-    gap: 4px;
-    padding-top: 0;
+    gap: 6px;
+    padding: 0 10px;
     border-top: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    padding-left: 8px;
-    margin-left: 4px;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
     align-items: center;
+    flex-shrink: 0;
+    height: 64px;
   }
 
   .sidebar .bottom .avatar {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     font-size: 12px;
-    border-radius: 8px;
+    border-radius: 9px;
   }
 
-  .sidebar .bottom .logout .logout-label {
+  .sidebar .bottom .logout-label {
     display: none;
   }
 
   .sidebar .bottom .logout {
-    padding: 4px 8px;
+    padding: 8px;
+    border-radius: 10px;
   }
 
   .sidebar .bottom .logout svg {
-    width: 18px;
-    height: 18px;
+    width: 19px;
+    height: 19px;
   }
 }
 
-/* Pour les très petits écrans (moins de 400px) : réduire encore */
+/* Très petits écrans (≤ 400px) : on resserre encore l'ensemble */
 @media (max-width: 400px) {
-  .sidebar {
+  .sidebar .nav,
+  .sidebar .nav-bell,
+  .sidebar .bottom {
     height: 58px;
+  }
+
+  .sidebar .nav a {
+    min-width: 52px;
+    font-size: 9.5px;
+    padding: 7px 2px 5px;
+  }
+
+  .sidebar .nav a svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .sidebar .nav-bell {
     padding: 0 4px;
   }
-  .sidebar .nav a {
-    padding: 4px 6px;
-    min-width: 38px;
-  }
-  .sidebar .nav a svg {
-    width: 18px;
-    height: 18px;
-  }
+
   .sidebar .nav-bell button {
-    padding: 4px 6px;
+    padding: 6px;
   }
+
+  .sidebar .bottom {
+    padding: 0 6px;
+    gap: 4px;
+  }
+
   .sidebar .bottom .avatar {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     font-size: 10px;
   }
+
   .sidebar .bottom .logout svg {
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
+  }
+}
+
+/* Accessibilité : zones tactiles minimales garanties */
+@media (max-width: 768px) {
+  .sidebar .nav a,
+  .sidebar .nav-bell button,
+  .sidebar .bottom .logout {
+    -webkit-tap-highlight-color: transparent;
   }
 }
