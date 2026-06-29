@@ -66,9 +66,7 @@ function Bay({ status, num, clickable, onClick, onHover, onLeave }) {
       onMouseEnter={(e) => clickable && (e.currentTarget.style.transform = "translateY(-2px)")}
       onMouseOut={(e) => (e.currentTarget.style.transform = "translateY(0)")}
     >
-      <span style={{ position: "absolute", top: 3, left: 0, right: 0, textAlign: "center", fontFamily: FONT_MONO, fontSize: 8, color: "rgba(255,255,255,0.35)", letterSpacing: "0.04em" }}>
-        {num}
-      </span>
+      <span className="upk-status-bay-num">{num}</span>
       {status === "free" && (
         <span style={{ position: "absolute", inset: "18%", borderRadius: "50%", border: `1.5px solid ${T.green}`, opacity: 0.55, animation: "uparkPulse 2.2s ease-out infinite" }} />
       )}
@@ -284,11 +282,10 @@ export default function ParkingStatus() {
                     background: "#02457A", // <-- couleur modifiée
                   }}
                 >
-                  <span style={{ position: "absolute", left: "50%", top: 16, bottom: 16, width: 0, borderLeft: "3px dashed rgba(255,255,255,0.3)", transform: "translateX(-50%)", zIndex: 0 }} />
                   {slots.length === 0 ? (
                     <p style={{ position: "relative", zIndex: 1, color: "rgba(255,255,255,0.6)", fontFamily: FONT_MONO, fontSize: 12 }}>Loading slots...</p>
                   ) : (
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 9, position: "relative", zIndex: 1 }}>
+                    <div className="upk-status-grid">
                       {slots.map((s) => {
                         const isMine = role === "student" && mySession?.hasReservation && mySession.reservationAreaName === area.areaName && mySession.reservationSlotNumber === s.slotNumber;
                         const visualStatus = isMine ? "mine" : STATUS_MAP[s.status] || "occ";

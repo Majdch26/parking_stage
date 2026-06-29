@@ -24,8 +24,6 @@ function ReservationContent() {
   const [slotWindows, setSlotWindows] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
-  // État pour les compteurs
   const [countdown, setCountdown] = useState({ startIn: null, left: null });
 
   const todayIso = new Date().toLocaleDateString("en-CA");
@@ -49,6 +47,14 @@ function ReservationContent() {
     loadReservations();
   }, []);
 
+  // Helper pour créer un objet Date en heure locale
+  const createLocalDate = (dateStr, timeStr) => {
+    if (!dateStr || !timeStr) return null;
+    const [year, month, day] = dateStr.split("-").map(Number);
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return new Date(year, month - 1, day, hours, minutes);
+  };
+
   // Mise à jour des compteurs toutes les secondes
   useEffect(() => {
     const interval = setInterval(() => {
@@ -61,8 +67,13 @@ function ReservationContent() {
       }
 
       const now = new Date();
-      const start = new Date(active.reservationDate + "T" + active.scheduledEntryTime);
-      const end = new Date(active.reservationDate + "T" + active.scheduledEndTime);
+      const start = createLocalDate(active.reservationDate, active.scheduledEntryTime);
+      const end = createLocalDate(active.reservationDate, active.scheduledEndTime);
+
+      if (!start || !end) {
+        setCountdown({ startIn: null, left: null });
+        return;
+      }
 
       const startDiff = start - now;
       const endDiff = end - now;
@@ -132,7 +143,7 @@ function ReservationContent() {
     setSuccess("");
 
     if (form.scheduledEndTime <= form.scheduledEntryTime) {
-      setError("L'heure de fin doit être après l'heure de début.");
+      setError("End time must be after start time.");
       return;
     }
 
@@ -148,7 +159,7 @@ function ReservationContent() {
       }
 
       await axiosClient.post("/Reservation", payload);
-      setSuccess("Réservation effectuée avec succès !");
+      setSuccess("Reservation created successfully!");
       const zoneA = areas.find((a) => a.areaName === "Zone A");
       setForm({
         areaId: (zoneA || areas[0]) ? String((zoneA || areas[0]).id) : "",
@@ -162,7 +173,7 @@ function ReservationContent() {
       setSlotWindows(null);
       loadReservations();
     } catch (err) {
-      setError(err.response?.data?.message || "Erreur lors de la réservation.");
+      setError(err.response?.data?.message || "Error while reserving.");
     }
   };
 
@@ -172,20 +183,24 @@ function ReservationContent() {
       await axiosClient.post(`/Reservation/${id}/cancel`);
       loadReservations();
     } catch (err) {
-      setError(err.response?.data?.message || "Erreur lors de l'annulation.");
+      setError(err.response?.data?.message || "Error while cancelling.");
     }
   };
 
   const fmtTime = (t) => (typeof t === "string" ? t.slice(0, 5) : t);
 
-  // Fonction pour formater les secondes en HH:MM:SS
+  // Formatage : 2h 30m 45s ou 30m 45s ou 45s
   const formatDuration = (seconds) => {
     if (seconds === null || seconds === undefined) return "—";
-    if (seconds <= 0) return "00:00:00";
+    if (seconds <= 0) return "0s";
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    const parts = [];
+    if (h > 0) parts.push(`${h}h`);
+    if (m > 0) parts.push(`${m}m`);
+    if (s > 0 || parts.length === 0) parts.push(`${s}s`);
+    return parts.join(" ");
   };
 
   return (
@@ -273,6 +288,17 @@ function ReservationContent() {
                 </div>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "1.1rem", fontWeight: 700, color: "#dc3545" }}>
                   Ended
+                </div>
+              </div>
+            )}
+            {/* Si aucun timer n'est affiché, on montre le statut normalement */}
+            {countdown.startIn === null && countdown.left === null && (
+              <div style={{ background: "#f1f3f8", padding: "10px 16px", borderRadius: "12px", flex: "1 1 auto" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.06em", color: "#6b7280", fontWeight: 700 }}>
+                  Status
+                </div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "1.1rem", fontWeight: 700, color: "#02457A" }}>
+                  {activeReservation.status}
                 </div>
               </div>
             )}
@@ -426,7 +452,7 @@ function ReservationContent() {
 export default function Reservation() {
   return (
     <AppLayout>
-        <ReservationContent />
+      <ReservationContent />
     </AppLayout>
   );
 }

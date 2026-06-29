@@ -458,6 +458,36 @@
      .upk-lot-grid { grid-template-columns: repeat(5, 1fr); gap: 7px; }
    }
 
+   /* ===== Grille de places — page Parking status (fond sombre) =====
+      Même logique responsive que .upk-lot-grid ci-dessus, adaptée au
+      fond bleu marine de cette page (texte clair au lieu de sombre). */
+   .upk-status-grid {
+     display: grid;
+     grid-template-columns: repeat(8, 1fr);
+     gap: 9px;
+     position: relative;
+     z-index: 1;
+   }
+   .upk-status-bay-num {
+     position: absolute;
+     top: 3px;
+     left: 0;
+     right: 0;
+     text-align: center;
+     font-family: var(--upk-font-mono);
+     font-size: 11px;
+     font-weight: 700;
+     color: rgba(255, 255, 255, 0.65);
+     letter-spacing: 0.02em;
+   }
+   @media (max-width: 992px) {
+     .upk-status-grid { grid-template-columns: repeat(6, 1fr); }
+   }
+   @media (max-width: 480px) {
+     .upk-status-grid { grid-template-columns: repeat(5, 1fr); gap: 7px; }
+     .upk-status-bay-num { font-size: 10px; }
+   }
+
    /* ===== Bandeau d'accueil (Welcome banner) – même couleur que la sidebar ===== */
 .upk-welcome-banner {
     background: linear-gradient(135deg, var(--bg-sidebar), #013a63);
