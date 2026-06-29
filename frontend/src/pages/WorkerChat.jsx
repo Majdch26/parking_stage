@@ -4,85 +4,83 @@ import axiosClient from "../api/axiosClient";
 import AppLayout from "../components/AppLayout";
 import "../upark.css";
 
-const POLL_INTERVAL_MS = 4000;
-const MAX_RETRIES = 3;
+const POLL_INTERVAL_MS = 5000;
 
 export default function WorkerChat() {
   const [messages, setMessages] = useState(null); // null = loading, [] = empty
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
-  const [pollingError, setPollingError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const bottomRef = useRef(null);
   const lastIdRef = useRef(0);
   const myUserId = Number(localStorage.getItem("userId"));
   const intervalRef = useRef(null);
-  const retryCountRef = useRef(0);
 
-  // Scroll to bottom when messages change
+  // Vérifier que l'utilisateur est bien identifié
+  if (!myUserId) {
+    console.warn("WorkerChat: userId not found in localStorage");
+  }
+
+  // Scroll en bas quand les messages changent
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Fetch messages function
-  const fetchMessages = useCallback(async (sinceId = 0) => {
+  // Fonction pour récupérer les messages depuis un ID donné
+  const fetchMessagesSince = useCallback(async (sinceId) => {
     try {
       const res = await axiosClient.get(`/WorkerChat/messages/since/${sinceId}`);
       return res.data;
     } catch (err) {
+      console.error("fetchMessagesSince error:", err);
       throw err;
     }
   }, []);
 
-  // Load initial messages
+  // Chargement initial
   const loadInitialMessages = useCallback(async () => {
+    setLoading(true);
+    setError("");
     try {
-      const data = await fetchMessages(0);
+      const data = await fetchMessagesSince(0);
       setMessages(data);
       if (data.length > 0) {
         lastIdRef.current = data[data.length - 1].id;
       }
-      setPollingError(false);
-      retryCountRef.current = 0;
     } catch (err) {
+      const msg = err.response?.data?.message || err.message || "Unknown error";
+      setError(`Failed to load messages: ${msg}`);
       setMessages([]);
-      setPollingError(true);
-      setError("Failed to load messages. Please refresh.");
+    } finally {
+      setLoading(false);
     }
-  }, [fetchMessages]);
+  }, [fetchMessagesSince]);
 
-  // Poll for new messages
+  // Polling pour les nouveaux messages
   const pollNewMessages = useCallback(async () => {
     try {
-      const data = await fetchMessages(lastIdRef.current);
+      const data = await fetchMessagesSince(lastIdRef.current);
       if (data.length > 0) {
         setMessages((prev) => [...(prev || []), ...data]);
         lastIdRef.current = data[data.length - 1].id;
       }
-      setPollingError(false);
-      retryCountRef.current = 0;
     } catch (err) {
-      // If polling fails, we keep trying but don't show error to user each time
-      // but we can set a flag if it persists
-      setPollingError(true);
-      // Increment retry count, maybe we can attempt to reconnect after a few failures
-      retryCountRef.current += 1;
-      if (retryCountRef.current >= MAX_RETRIES) {
-        setError("Connection lost. Retrying...");
-        // Reset retry after some time?
-      }
+      // On ne modifie pas l'état d'erreur ici pour ne pas perturber l'utilisateur,
+      // mais on logue l'erreur
+      console.warn("Polling error:", err.message);
     }
-  }, [fetchMessages]);
+  }, [fetchMessagesSince]);
 
-  // Setup initial load and polling
+  // Initialisation et polling
   useEffect(() => {
     loadInitialMessages();
 
-    // Clear any previous interval
+    // Nettoyer l'ancien intervalle
     if (intervalRef.current) clearInterval(intervalRef.current);
 
-    // Start polling
+    // Démarrer le polling après le chargement initial
     intervalRef.current = setInterval(pollNewMessages, POLL_INTERVAL_MS);
 
     return () => {
@@ -90,13 +88,7 @@ export default function WorkerChat() {
     };
   }, [loadInitialMessages, pollNewMessages]);
 
-  // Manual refresh
-  const handleRefresh = () => {
-    setError("");
-    loadInitialMessages();
-  };
-
-  // Send message
+  // Envoyer un message
   const handleSend = async (e) => {
     e.preventDefault();
     const text = draft.trim();
@@ -105,28 +97,34 @@ export default function WorkerChat() {
     setSending(true);
     setError("");
     try {
-      // Post the message
       await axiosClient.post("/WorkerChat/messages", { message: text });
       setDraft("");
 
-      // Immediately fetch new messages since lastId
-      const newData = await fetchMessages(lastIdRef.current);
+      // Récupérer les nouveaux messages (incluant celui qu'on vient d'envoyer)
+      const newData = await fetchMessagesSince(lastIdRef.current);
       if (newData.length > 0) {
         setMessages((prev) => [...(prev || []), ...newData]);
         lastIdRef.current = newData[newData.length - 1].id;
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Error sending message.");
+      const msg = err.response?.data?.message || err.message || "Unknown error";
+      setError(`Error sending message: ${msg}`);
+      console.error("Send error:", err);
     } finally {
       setSending(false);
     }
   };
 
+  // Rafraîchir manuellement
+  const handleRefresh = () => {
+    loadInitialMessages();
+  };
+
   const fmtTime = (d) =>
     new Date(d).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
-  // Show loading state
-  if (messages === null) {
+  // Affichage du chargement
+  if (loading) {
     return (
       <AppLayout>
         <Container style={{ maxWidth: "650px", paddingTop: "24px", textAlign: "center" }}>
@@ -153,7 +151,6 @@ export default function WorkerChat() {
         {error && (
           <Alert color="danger" className="mb-3">
             {error}
-            {pollingError && " (auto-reconnect in progress)"}
           </Alert>
         )}
 
@@ -168,12 +165,12 @@ export default function WorkerChat() {
                 flexDirection: "column",
               }}
             >
-              {messages.length === 0 ? (
+              {messages?.length === 0 ? (
                 <p style={{ color: "#6B7280", textAlign: "center", marginTop: "20px" }}>
                   No messages yet. Be the first to write!
                 </p>
               ) : (
-                messages.map((m) => {
+                messages?.map((m) => {
                   const isMine = m.senderId === myUserId;
                   return (
                     <div
