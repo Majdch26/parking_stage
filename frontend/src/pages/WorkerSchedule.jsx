@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Container, Card, CardBody } from "reactstrap";
 import axiosClient from "../api/axiosClient";
-import RequireCheckedIn from "./RequireCheckedIn";
 import AppLayout from "../components/AppLayout";
 import "../upark.css";
 
@@ -311,9 +310,7 @@ function WorkerScheduleContent() {
 export default function WorkerSchedule() {
   return (
     <AppLayout>
-      <RequireCheckedIn>
-        <WorkerScheduleContent />
-      </RequireCheckedIn>
+      <WorkerScheduleContent />
     </AppLayout>
   );
 }
