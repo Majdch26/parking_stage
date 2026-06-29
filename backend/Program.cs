@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using ParkingUniversitySystem.BackgroundServices;
 using ParkingUniversitySystem.DAL;
 using ParkingUniversitySystem.Engine;
