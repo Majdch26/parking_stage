@@ -1,0 +1,780 @@
+/* ============================================================
+   UPark — Thème clair avec cartes #D6E8EE et bandeau #02457A
+   ============================================================ */
+   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+
+   :root {
+     /* Palette claire */
+     --bg-page: #F0F4F8;
+     --bg-surface: #FFFFFF;
+     --bg-card: #D6E8EE;          /* Nouveau fond des cartes #D6E8EE */
+     --bg-sidebar: #02457A;
+     --text-primary: #1A2A3A;
+     --text-secondary: #4A5A6A;
+     --text-muted: #6B7A8F;
+     --accent: #018ABE;
+     --accent-hover: #026FA0;
+     --accent-deep: #02457A;
+     --border: #C8D8E0;
+     --border-light: #E8ECF0;
+   
+     /* Couleurs fonctionnelles */
+     --green: #36D399;
+     --green-soft: #E6F9F0;
+     --amber: #F5B83D;
+     --amber-soft: #FDF4E6;
+     --red: #F25C66;
+     --red-soft: #FDECED;
+     --blue: var(--accent);
+     --blue-soft: #E3F0F8;
+   
+     --upk-font-display: 'Space Grotesk', sans-serif;
+     --upk-font-mono: 'JetBrains Mono', monospace;
+   }
+   
+   /* ===== Page de base ===== */
+   body {
+     background: var(--bg-page);
+     color: var(--text-primary);
+     font-family: 'Inter', sans-serif;
+   }
+   
+   /* ===== Bandeau (UpkBanner) – fond #02457A ===== */
+   .upk-banner {
+     position: relative;
+     overflow: hidden;
+     background: var(--bg-sidebar);  /* #02457A */
+     border-radius: 20px;
+     padding: 26px 30px;
+     color: #fff;
+     margin-bottom: 24px;
+   }
+   .upk-banner::before {
+     content: '';
+     position: absolute;
+     inset: 0;
+     background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 18px);
+     pointer-events: none;
+   }
+   .upk-banner-row {
+     position: relative;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     flex-wrap: wrap;
+     gap: 14px;
+   }
+   .upk-eyebrow {
+     font-size: 0.7rem;
+     font-weight: 700;
+     letter-spacing: 0.12em;
+     text-transform: uppercase;
+     color: #B0D9F0;
+     display: flex;
+     align-items: center;
+     gap: 8px;
+     margin-bottom: 6px;
+   }
+   .upk-eyebrow::before {
+     content: '';
+     width: 6px;
+     height: 6px;
+     border-radius: 50%;
+     background: var(--green);
+     box-shadow: 0 0 0 3px rgba(54, 211, 153, 0.25);
+   }
+   .upk-banner h1 {
+     font-family: var(--upk-font-display);
+     font-weight: 700;
+     font-size: 1.55rem;
+     margin: 0 0 4px;
+     color: #fff;
+   }
+   .upk-banner p {
+     opacity: 0.85;
+     margin: 0;
+     font-size: 0.85rem;
+   }
+   .upk-banner-icon {
+     width: 46px;
+     height: 46px;
+     border-radius: 13px;
+     background: rgba(255,255,255,0.15);
+     backdrop-filter: blur(4px);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     border: 1px solid rgba(255,255,255,0.2);
+     flex-shrink: 0;
+   }
+   
+   /* ===== Cartes – fond #D6E8EE ===== */
+   .upk-card {
+     background: var(--bg-card);   /* #D6E8EE */
+     border: 1px solid var(--border-light);
+     border-radius: 20px;
+     box-shadow: 0 4px 12px rgba(2, 69, 122, 0.06);
+   }
+   .upk-card-pad {
+     padding: 24px;
+   }
+   
+   /* ===== KPI (indicateurs) – même fond ===== */
+   .kpi {
+     background: var(--bg-card);
+     border: 1px solid var(--border-light);
+     border-radius: 20px;
+     padding: 18px 22px;
+     box-shadow: 0 4px 12px rgba(2, 69, 122, 0.06);
+     transition: all 0.3s ease;
+   }
+   .kpi:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 8px 20px rgba(2, 69, 122, 0.08);
+   }
+   .kpi .label {
+     font-size: 11px;
+     font-weight: 600;
+     text-transform: uppercase;
+     letter-spacing: 0.04em;
+     color: var(--text-muted);
+   }
+   .kpi .value {
+     font-family: var(--upk-font-display);
+     font-size: 32px;
+     font-weight: 700;
+     color: var(--text-primary);
+     margin-top: 4px;
+     line-height: 1.1;
+   }
+   .kpi .foot {
+     font-size: 11px;
+     color: var(--text-muted);
+     margin-top: 4px;
+   }
+   
+   /* ===== Ticket ===== */
+   .upk-ticket {
+     border: 1.5px dashed var(--border);
+     border-radius: 14px;
+     padding: 16px;
+     background: var(--bg-surface);
+     position: relative;
+   }
+   .upk-ticket::before,
+   .upk-ticket::after {
+     content: '';
+     position: absolute;
+     width: 14px;
+     height: 14px;
+     border-radius: 50%;
+     background: var(--bg-page);
+     top: 50%;
+     transform: translateY(-50%);
+   }
+   .upk-ticket::before { left: -8px; }
+   .upk-ticket::after { right: -8px; }
+   
+   /* ===== Labels ===== */
+   .upk-label {
+     font-family: var(--upk-font-mono);
+     font-size: 0.7rem;
+     font-weight: 700;
+     color: var(--text-muted);
+     text-transform: uppercase;
+     letter-spacing: 0.08em;
+     margin-bottom: 10px;
+     display: block;
+   }
+   
+   /* ===== Pills ===== */
+   .upk-pill {
+     display: inline-flex;
+     align-items: center;
+     gap: 6px;
+     padding: 4px 13px;
+     border-radius: 30px;
+     font-size: 0.72rem;
+     font-weight: 700;
+   }
+   .upk-pill.green { background: var(--green-soft); color: var(--green); }
+   .upk-pill.amber { background: var(--amber-soft); color: var(--amber); }
+   .upk-pill.red { background: var(--red-soft); color: var(--red); }
+   .upk-pill.slate { background: var(--border-light); color: var(--text-secondary); }
+   .upk-pill.blue { background: var(--blue-soft); color: var(--blue); }
+   .upk-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+   
+   /* ===== Buttons ===== */
+   .upk-btn {
+     font-family: 'Inter', sans-serif;
+     font-weight: 700;
+     font-size: 0.86rem;
+     border: none;
+     border-radius: 30px;
+     padding: 11px 22px;
+     cursor: pointer;
+     transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+   }
+   .upk-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+   .upk-btn-primary {
+     background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+     color: #fff;
+     box-shadow: 0 6px 16px rgba(1, 138, 190, 0.25);
+   }
+   .upk-btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(1, 138, 190, 0.35); }
+   .upk-btn-dark {
+     background: var(--accent-deep);
+     color: #fff;
+   }
+   .upk-btn-ghost {
+     background: var(--border-light);
+     color: var(--text-primary);
+   }
+   .upk-btn-danger {
+     background: var(--red);
+     color: #fff;
+   }
+   
+   /* ===== Chips ===== */
+   .upk-chip {
+     padding: 12px 18px;
+     border-radius: 14px;
+     border: 1px solid var(--border);
+     background: var(--bg-surface);
+     color: var(--text-primary);
+     font-family: var(--upk-font-display);
+     font-weight: 600;
+     font-size: 0.88rem;
+     cursor: pointer;
+     transition: all 0.18s ease;
+     display: flex;
+     flex-direction: column;
+     align-items: flex-start;
+     gap: 6px;
+     min-width: 120px;
+   }
+   .upk-chip.active {
+     border-color: transparent;
+     background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+     color: #fff;
+     box-shadow: 0 6px 16px rgba(1, 138, 190, 0.25);
+   }
+   .upk-chip .upk-chip-sub {
+     font-size: 0.68rem;
+     font-weight: 700;
+     font-family: 'Inter', sans-serif;
+     padding: 3px 9px;
+     border-radius: 30px;
+     background: var(--green-soft);
+     color: var(--green);
+   }
+   .upk-chip.active .upk-chip-sub {
+     background: rgba(255,255,255,0.2);
+     color: #fff;
+   }
+   
+   /* ===== Vehicle card ===== */
+   .upk-vehicle-card {
+     background: var(--bg-surface);
+     border: 1px solid var(--border-light);
+     border-radius: 18px;
+     padding: 20px;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 10px;
+     position: relative;
+     text-align: center;
+     transition: transform 0.15s ease, box-shadow 0.15s ease;
+   }
+   .upk-vehicle-card:hover {
+     transform: translateY(-3px);
+     box-shadow: 0 12px 28px rgba(2, 69, 122, 0.06);
+   }
+   .upk-vehicle-card .upk-plate {
+     font-family: var(--upk-font-mono);
+     background: var(--accent-deep);
+     color: #fff;
+     padding: 4px 12px;
+     border-radius: 6px;
+     font-size: 0.8rem;
+     letter-spacing: 0.06em;
+   }
+   .upk-vehicle-primary-flag {
+     position: absolute;
+     top: 12px;
+     right: 12px;
+     font-size: 0.62rem;
+     font-weight: 700;
+     padding: 3px 10px;
+     border-radius: 30px;
+     background: var(--blue-soft);
+     color: var(--blue);
+   }
+   
+   /* ===== Timeline ===== */
+   .upk-timeline { position: relative; padding-left: 26px; }
+   .upk-timeline::before {
+     content: '';
+     position: absolute;
+     left: 7px;
+     top: 6px;
+     bottom: 6px;
+     width: 0;
+     border-left: 2px dashed var(--border);
+   }
+   .upk-timeline-item { position: relative; padding-bottom: 18px; }
+   .upk-timeline-item:last-child { padding-bottom: 0; }
+   .upk-timeline-dot {
+     position: absolute;
+     left: -26px;
+     top: 2px;
+     width: 14px;
+     height: 14px;
+     border-radius: 50%;
+     border: 3px solid var(--bg-surface);
+     box-shadow: 0 0 0 2px var(--border);
+   }
+   .upk-timeline-dot.done { background: var(--green); box-shadow: 0 0 0 2px var(--green-soft); }
+   .upk-timeline-dot.pending { background: var(--text-muted); box-shadow: 0 0 0 2px var(--border-light); }
+   .upk-timeline-dot.active { background: var(--accent); box-shadow: 0 0 0 2px var(--blue-soft); }
+   
+   /* ===== Inputs (reactstrap) ===== */
+   .upk-card .form-control,
+   .upk-card .form-select {
+     border: 1px solid var(--border);
+     border-radius: 12px;
+     padding: 10px 14px;
+     font-family: 'Inter', sans-serif;
+   }
+   .upk-card .form-control:focus,
+   .upk-card .form-select:focus {
+     border-color: var(--accent);
+     box-shadow: 0 0 0 3px rgba(1, 138, 190, 0.12);
+   }
+   
+   /* ===== Mini plan (SlotMap) – fond #D6E8EE ===== */
+   .upk-lot {
+     position: relative;
+     border-radius: 16px;
+     padding: 20px 16px 14px;
+     overflow: hidden;
+     background: var(--bg-card);  /* #D6E8EE */
+     border: 1px solid var(--border-light);
+   }
+   .upk-lot::before {
+     content: '';
+     position: absolute;
+     left: 50%;
+     top: 12px;
+     bottom: 12px;
+     width: 0;
+     border-left: 3px dashed rgba(2, 69, 122, 0.12);
+     transform: translateX(-50%);
+   }
+   .upk-lot-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+     gap: 9px;
+     position: relative;
+     z-index: 1;
+   }
+   .upk-bay {
+     position: relative;
+     aspect-ratio: 0.92;
+     border-radius: 5px;
+     border-top: 2.5px solid rgba(2, 69, 122, 0.2);
+     border-bottom: 2.5px solid rgba(2, 69, 122, 0.2);
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     gap: 2px;
+     transition: transform 0.15s;
+     background: rgba(255,255,255,0.6);
+     cursor: pointer;
+   }
+   .upk-bay:hover:not(:disabled) { transform: translateY(-2px); }
+   .upk-bay:disabled { cursor: not-allowed; }
+   .upk-bay .upk-bay-num {
+     font-family: var(--upk-font-mono);
+     font-size: 8px;
+     color: var(--text-muted);
+     letter-spacing: 0.04em;
+   }
+   .upk-bay svg { width: 55%; height: 55%; }
+   
+   .upk-bay.free .upk-bay-num { color: var(--green); }
+   .upk-bay.free::after {
+     content: '';
+     position: absolute;
+     inset: 18%;
+     border-radius: 50%;
+     border: 1.5px solid var(--green);
+     opacity: 0.5;
+     animation: upkPulse 2.2s ease-out infinite;
+   }
+   .upk-bay.occupied .upk-bay-num { color: var(--text-muted); }
+   .upk-bay.reserved .upk-bay-num { color: var(--amber); }
+   .upk-bay.maintenance .upk-bay-num { color: var(--red); }
+   .upk-bay.selected { filter: drop-shadow(0 0 8px rgba(1, 138, 190, 0.5)); }
+   .upk-bay.selected .upk-bay-num { color: var(--accent); }
+   
+   @keyframes upkPulse {
+     0% { transform: scale(0.55); opacity: 0.7; }
+     70% { transform: scale(1.25); opacity: 0; }
+     100% { opacity: 0; }
+   }
+   
+   @media (max-width: 480px) {
+     .upk-lot-grid { grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); }
+   }
+
+   /* ===== Bandeau d'accueil (Welcome banner) – même couleur que la sidebar ===== */
+.upk-welcome-banner {
+    background: #02457A !important;  /* ← change ici pour la couleur du bandeau */
+    border-radius: 20px;
+    padding: 30px 34px;
+    color: white;
+    margin-bottom: 24px;
+    margin-top: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .upk-welcome-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 18px);
+    pointer-events: none;
+  }
+  .upk-welcome-banner .upk-welcome-date {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #B0D9F0;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .upk-welcome-banner .upk-welcome-date .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22,163,74,0.25);
+  }
+  .upk-welcome-banner h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: white;
+    margin-bottom: 4px;
+    font-weight: 700;
+    font-size: 1.65rem;
+  }
+  .upk-welcome-banner .upk-welcome-role {
+    opacity: 0.8;
+    margin: 0;
+    text-transform: capitalize;
+    font-size: 0.85rem;
+  }
+  .upk-welcome-banner .upk-welcome-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.15), 0 8px 20px rgba(59,130,246,0.4);
+    flex-shrink: 0;
+  }
+  
+  /* ===== Carte "Central Parking — Lot view" – fond #D6E8EE ===== */
+.upk-parking-card {
+    background: #FFFFFF  !important;
+    border: none !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 12px rgba(2, 69, 122, 0.1) !important;
+  }
+  .upk-parking-card .card-body {
+    padding: 22px;
+    color: #1A2A3A; /* ← texte principal en sombre */
+  }
+  
+  /* En-tête : titre + lien */
+  .upk-parking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  
+  .upk-parking-card .upk-parking-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #1A2A3A; /* ← bleu profond pour le titre */
+    margin: 0;
+  }
+  
+  .upk-parking-card .upk-parking-link {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #018ABE; /* ← bleu vif pour le lien */
+    text-decoration: none;
+  }
+  .upk-parking-card .upk-parking-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* Sous-titre */
+  .upk-parking-card .upk-parking-sub {
+    font-size: 0.78rem;
+    color: #4A5A6A; /* ← gris moyen */
+    margin-bottom: 14px;
+  }
+  
+  /* Légende */
+  .upk-parking-card .upk-legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  
+  .upk-parking-card .upk-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #1A2A3A; /* ← sombre */
+  }
+  
+  /* Carré de couleur dans la légende */
+  .upk-legend-swatch {
+    width: 14px;
+    height: 9px;
+    border-radius: 2px;
+  }
+  
+  /* Zones de parking (A, B, etc.) */
+  .upk-parking-area {
+    margin-bottom: 14px;
+  }
+  .upk-parking-area:last-child {
+    margin-bottom: 0;
+  }
+  
+  .upk-parking-area-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .upk-parking-area-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #02457A; /* ← bleu profond */
+  }
+  
+  .upk-parking-area-availability {
+    font-size: 0.75rem;
+    color: #4A5A6A; /* ← gris moyen */
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ===== Classes supplémentaires pour la carte "Central Parking" ===== */
+
+/* En-tête de la carte (titre + lien) */
+.upk-parking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  
+  /* Conteneur d'une zone de parking */
+  .upk-parking-area {
+    margin-bottom: 14px;
+  }
+  .upk-parking-area:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Ligne : nom de la zone + compteur */
+  .upk-parking-area-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  /* Nom de la zone (ex: "Zone A") */
+  .upk-parking-area-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1A2A3A;
+  }
+  
+  /* Compteur (ex: "3 / 8 free") */
+  .upk-parking-area-availability {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  
+  /* Carré de couleur dans la légende */
+  .upk-legend-swatch {
+    width: 14px;
+    height: 9px;
+    border-radius: 2px;
+  }
+
+  /* ===== Carte "Active session" ===== */
+.upk-session-card {
+    background: #FFFFFF !important;  /* ← change ici pour la couleur de fond */
+    border: 1px solid #E8ECF0 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 2px 10px rgba(20,30,60,0.04) !important;
+  }
+  .upk-session-card .card-body {
+    padding: 20px;
+  }
+  .upk-session-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin: 0;
+    color: #1A2A3A;
+  }
+  .upk-session-status {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #16a34a;
+    background: #E6F9F0;
+    padding: 4px 12px;
+    border-radius: 30px;
+  }
+  .upk-session-empty {
+    color: #6B7A8F;
+    font-size: 0.83rem;
+    margin: 0;
+  }
+  .upk-session-ticket {
+    border: 1.5px dashed #D4DCE4;
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #fbfcff, #f3f6fb);
+  }
+  .upk-session-vehicle-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #1A2A3A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .upk-session-area {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: #1A2A3A;
+  }
+  .upk-session-slot {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: #4A5A6A;
+    margin-top: 2px;
+  }
+  .upk-session-button {
+    width: 100%;
+    margin-top: 16px;
+    background: #1A2A3A;
+    border: none;
+    border-radius: 30px;
+    font-weight: 700;
+    padding: 8px 0;
+    color: #fff;
+  }
+  
+  /* ===== Carte "Violation points" ===== */
+  .upk-violation-card {
+    background: #FFFFFF !important;  /* ← change ici pour la couleur de fond */
+    border: 1px solid #E8ECF0 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 2px 10px rgba(20,30,60,0.04) !important;
+  }
+  .upk-violation-card .card-body {
+    padding: 20px;
+  }
+  .upk-violation-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin: 0;
+    color: #1A2A3A;
+  }
+  .upk-violation-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 30px;
+    background: #F1F3F8;
+  }
+  /* Le badge de niveau change dynamiquement, on laisse la couleur en inline */
+  .upk-violation-value {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .upk-violation-number {
+    font-size: 32px;
+    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    color: #1A2A3A;
+  }
+  .upk-violation-max {
+    font-size: 12px;
+    color: #6B7A8F;
+  }
+  .upk-violation-bar {
+    height: 8px;
+    background: #F1F3F8;
+    border-radius: 30px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .upk-violation-bar-fill {
+    display: block;
+    height: 100%;
+    border-radius: 30px;
+    background: linear-gradient(90deg, #16a34a, #e8970b 60%, #ef4444);
+  }
+  .upk-violation-note {
+    font-size: 0.78rem;
+    color: #4A5A6A;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ===== Zone asphaltée (où apparaissent les voitures) ===== */
+.upk-asphalt-lot {
+    position: relative;
+    border-radius: 16px;
+    padding: 20px 16px 14px;
+    overflow: hidden;
+    background: #02457A;  /* ← Change ici pour la couleur de ton choix */
+  }

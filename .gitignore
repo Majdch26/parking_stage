@@ -1,0 +1,19 @@
+# .NET
+backend/bin/
+backend/obj/
+
+# Visual Studio
+.vs/
+
+# VS Code
+.vscode/
+
+# Node
+node_modules/
+
+# Environment
+.env
+.env.*
+
+# macOS
+.DS_Store
