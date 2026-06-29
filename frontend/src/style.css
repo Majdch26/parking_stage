@@ -61,6 +61,7 @@
      color: var(--white);
      -webkit-font-smoothing: antialiased;
      line-height: 1.6;
+     overflow-x: hidden;
    }
    
    h1,
@@ -2060,5 +2061,94 @@
        width: calc(100% - 32px);
        right: 16px;
        top: 16px;
+     }
+   }
+
+   /* ============================================================
+      Très petits téléphones (≤480px) — affinage du Login/Signup
+      ============================================================ */
+   @media (max-width: 480px) {
+     .login-screen {
+       grid-template-columns: 1fr;
+     }
+     .login-art {
+       padding: 22px 18px;
+       min-height: auto;
+       gap: 18px;
+     }
+     .login-art .brand-name {
+       font-size: 18px;
+     }
+     .mark {
+       width: 34px;
+       height: 34px;
+     }
+     .mark svg {
+       width: 18px;
+       height: 18px;
+     }
+     .lot {
+       width: 100%;
+       max-width: 280px;
+       height: 190px;
+     }
+     .lot-watermark {
+       font-size: 120px;
+     }
+     .lot-frame {
+       inset: 12px;
+       padding: 14px;
+     }
+     .lot-grid {
+       gap: 7px;
+     }
+     .login-pitch {
+       max-width: 100%;
+     }
+     .login-pitch h2 {
+       font-size: 20px;
+     }
+     .login-pitch p {
+       font-size: 12.5px;
+     }
+     .login-form-wrap {
+       padding: 20px 16px 32px;
+     }
+     .login-form {
+       width: 100%;
+       max-width: 100%;
+     }
+     .login-form h1 {
+       font-size: 24px;
+     }
+     .field-input {
+       height: 42px;
+     }
+     .field-input svg {
+       width: 17px;
+       height: 17px;
+     }
+     .btn-block {
+       width: 100%;
+     }
+     .login-foot {
+       flex-direction: column;
+       gap: 8px;
+       align-items: flex-start;
+     }
+   }
+
+   /* Hauteur d'écran très réduite (clavier ouvert sur mobile) :
+      on raccourcit la partie visuelle pour laisser de la place au formulaire */
+   @media (max-width: 480px) and (max-height: 700px) {
+     .login-art {
+       padding: 16px 18px;
+     }
+     .lot {
+       height: 150px;
+       max-width: 220px;
+     }
+     .login-pitch {
+       display: none;
      }
    }

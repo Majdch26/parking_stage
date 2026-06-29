@@ -507,7 +507,7 @@ export default function Dashboard() {
           )}
 
           {/* Lot card + Session + Violation */}
-          <div style={{ display: "grid", gridTemplateColumns: "1.25fr 0.78fr", gap: "20px", marginBottom: "8px" }}>
+          <div className="upk-lot-session-grid" style={{ display: "grid", gridTemplateColumns: "1.25fr 0.78fr", gap: "20px", marginBottom: "8px" }}>
             {/* Central Parking card */}
             <Card className="upk-parking-card">
               <CardBody>
