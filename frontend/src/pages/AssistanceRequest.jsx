@@ -198,10 +198,10 @@ function AssistanceRequestContent() {
 
 export default function AssistanceRequest() {
   return (
-    <SessionGate>
-      <AppLayout>
+    <AppLayout>
+      <SessionGate>
         <AssistanceRequestContent />
-      </AppLayout>
-    </SessionGate>
+      </SessionGate>
+    </AppLayout>
   );
 }

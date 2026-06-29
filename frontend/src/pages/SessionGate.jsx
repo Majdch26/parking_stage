@@ -22,13 +22,13 @@ export default function SessionGate({ children }) {
       <Card style={{ borderRadius: "12px", maxWidth: "500px", margin: "60px auto" }}>
         <CardBody className="text-center">
           <h5 style={{ color: "#ef4444", fontFamily: "'Space Grotesk', sans-serif" }}>
-            Tu n'es pas encore entré au parking
+            You haven't entered the parking yet
           </h5>
           <p style={{ color: "#4a5568" }}>
-            Cette page n'est disponible qu'une fois ton entrée scannée au portail.
+            This page is only available once your entry has been scanned at the gate.
           </p>
           <Link to="/dashboard">
-            <Button color="primary">Retour au tableau de bord</Button>
+            <Button color="primary">Back to Dashboard</Button>
           </Link>
         </CardBody>
       </Card>

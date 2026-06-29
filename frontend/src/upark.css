@@ -944,7 +944,7 @@
     /* Contenu */
     main.content {
       padding: 12px !important;
-      margin-bottom: calc(54px + env(safe-area-inset-bottom)) !important;
+      margin-bottom: calc(70px + env(safe-area-inset-bottom)) !important;
     }
   
     /* KPI : une colonne */
@@ -1293,7 +1293,7 @@
      systématiquement rester au-dessus de cette barre, jamais la chevaucher. */
   @media (max-width: 768px) {
     .chat-fab {
-      bottom: calc(66px + env(safe-area-inset-bottom));
+      bottom: calc(86px + env(safe-area-inset-bottom));
       right: 16px;
       width: 48px;
       height: 48px;
@@ -1301,7 +1301,7 @@
       z-index: var(--z-chat-fab);
     }
     .chat-box-popup {
-      bottom: calc(128px + env(safe-area-inset-bottom));
+      bottom: calc(148px + env(safe-area-inset-bottom));
       right: 10px;
       width: calc(100% - 20px);
       max-height: 65vh;
@@ -1332,6 +1332,316 @@
     }
   }
   
+  /* ============================================================
+     Notifications — bouton + panneau (NotificationBell)
+     Remplace l'ancien positionnement 100% inline-JS (cassé en mobile)
+     par un système purement CSS : ancré près de la sidebar en desktop,
+     bottom-sheet plein écran en mobile.
+     ============================================================ */
+  .notif-trigger-wrap {
+    position: relative;
+    display: flex;
+  }
+
+  .notif-trigger {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.2s, transform 0.2s;
+  }
+
+  .notif-trigger:hover {
+    color: #fff;
+    transform: scale(1.08);
+  }
+
+  .notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: linear-gradient(135deg, #F25C66, #C8313D);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 800;
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    box-shadow: 0 0 0 2px #02457A, 0 2px 6px rgba(0, 0, 0, 0.3);
+    line-height: 1;
+    animation: notifPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes notifPop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+
+  .notif-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 16, 30, 0.32);
+    backdrop-filter: blur(2px);
+    z-index: 940;
+    animation: notifFadeIn 0.2s ease;
+  }
+
+  @keyframes notifFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .notif-panel {
+    position: fixed;
+    z-index: 950;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    /* Desktop : ancré juste à droite de la sidebar pleine largeur */
+    top: 20px;
+    left: 236px;
+    width: 360px;
+    max-height: min(560px, calc(100vh - 40px));
+    border-radius: var(--upk-r-lg, 20px);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 24px 60px rgba(2, 18, 43, 0.22);
+    animation: notifSlideDesktop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes notifSlideDesktop {
+    from { opacity: 0; transform: translateX(-10px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .notif-panel-grip {
+    display: none;
+  }
+
+  .notif-panel-header {
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #02457A, #026FA0);
+    flex-shrink: 0;
+  }
+
+  .notif-panel-header strong {
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.98rem;
+  }
+
+  .notif-panel-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .notif-icon-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #EAF4FB;
+    transition: background 0.2s;
+  }
+
+  .notif-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.24);
+  }
+
+  .notif-tabs {
+    display: flex;
+    gap: 20px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border-light);
+    background: #F8FAFC;
+    flex-shrink: 0;
+  }
+
+  .notif-tab {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 0 9px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .notif-tab.active {
+    color: var(--accent-deep);
+    border-bottom-color: var(--accent-deep);
+  }
+
+  .notif-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 4px 0;
+  }
+
+  .notif-empty {
+    color: var(--text-muted);
+    padding: 32px 16px;
+    margin: 0;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .notif-row {
+    padding: 12px 16px;
+    border-bottom: 1px solid #ECF0F3;
+    cursor: pointer;
+    display: flex;
+    gap: 12px;
+    transition: background 0.15s;
+    background: transparent;
+  }
+
+  .notif-row.is-read {
+    cursor: default;
+  }
+
+  .notif-row.is-unread {
+    background: #F0F6FF;
+  }
+
+  .notif-row.is-unread:hover {
+    background: #E3EDFA;
+  }
+
+  .notif-row-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #F1F3F8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-muted);
+  }
+
+  .notif-row.is-unread .notif-row-icon {
+    background: #E3EDFA;
+    color: var(--accent-deep);
+  }
+
+  .notif-row-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .notif-row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .notif-row-type {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--accent-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .notif-row-time {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .notif-row-msg {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  .notif-cta {
+    margin-top: 6px;
+    background: #E3EDFA;
+    color: var(--accent-deep);
+    border: none;
+    border-radius: 30px;
+    padding: 4px 14px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .notif-cta:hover {
+    background: #D0E0F5;
+  }
+
+  .notif-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-deep);
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  body.notif-lock-scroll {
+    overflow: hidden;
+  }
+
+  /* Tablette : sidebar réduite à 76px (cf. Navbar.css) */
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .notif-panel {
+      left: 92px;
+    }
+  }
+
+  /* Mobile : bottom-sheet plein écran, au-dessus de la bottom-nav */
+  @media (max-width: 768px) {
+    .notif-panel {
+      top: auto;
+      left: 10px;
+      right: 10px;
+      bottom: calc(86px + env(safe-area-inset-bottom));
+      width: auto;
+      max-height: 70vh;
+      border-radius: 20px;
+      animation: notifSlideMobile 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes notifSlideMobile {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: none; }
+    }
+  }
+
+  @media (max-width: 400px) {
+    .notif-panel {
+      bottom: calc(78px + env(safe-area-inset-bottom));
+    }
+  }
+
   /* Sidebar : gérée entièrement par Navbar.css (plus de surcharge ici) */
 
   /* Transition douce pour la sidebar sur mobile */

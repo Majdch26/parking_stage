@@ -5,7 +5,7 @@ import { CalendarCheck } from "lucide-react";
 import axiosClient from "../api/axiosClient";
 import SlotMap from "../components/SlotMap";
 import SessionGate from "./SessionGate";
-import AppLayout from "../components/AppLayout"; // ← import du layout principal
+import AppLayout from "../components/AppLayout";
 import "../upark.css";
 
 function ReservationContent() {
@@ -340,10 +340,10 @@ function ReservationContent() {
 
 export default function Reservation() {
   return (
-    <SessionGate>
-      <AppLayout>
+    <AppLayout>
+      <SessionGate>
         <ReservationContent />
-      </AppLayout>
-    </SessionGate>
+      </SessionGate>
+    </AppLayout>
   );
 }

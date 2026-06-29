@@ -2,12 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import axiosClient from "../api/axiosClient";
 
-/**
- * Floating quick-help widget backed by a real AI (POST /Chat/ask). The backend
- * gathers the logged-in user's own live data (points, reservation, session,
- * vehicles, violations) and feeds it to the model so answers are personalized,
- * not just generic FAQ matching.
- */
 export default function ChatBox() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -59,11 +53,10 @@ export default function ChatBox() {
         }
       `}</style>
 
-      {/* Bouton flottant */}
       <button
         onClick={() => setOpen((o) => !o)}
         className="chat-fab"
-        aria-label="Ouvrir l'aide rapide"
+        aria-label="Open quick help"
       >
         {open ? <X size={22} /> : <MessageCircle size={22} color="#fff" />}
       </button>
@@ -184,7 +177,7 @@ export default function ChatBox() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Pose ta question..."
+              placeholder="Ask your question..."
               disabled={loading}
               style={{
                 flex: 1,

@@ -27,18 +27,9 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState("unread");
-  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
 
   const buttonRef = useRef(null);
   const popupRef = useRef(null);
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 480);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const load = () => {
     axiosClient.get("/Notification/mine").then((res) => setNotifications(res.data)).catch(() => {});
@@ -54,37 +45,22 @@ export default function NotificationBell() {
     const handleClickOutside = (e) => {
       const isButton = buttonRef.current && buttonRef.current.contains(e.target);
       const isPopup = popupRef.current && popupRef.current.contains(e.target);
-      if (!isButton && !isPopup) {
-        setOpen(false);
-      }
+      if (!isButton && !isPopup) setOpen(false);
+    };
+    const handleKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
     };
     if (open) {
       document.addEventListener("mousedown", handleClickOutside);
-    } else {
+      document.addEventListener("keydown", handleKey);
+      document.body.classList.add("notif-lock-scroll");
+    }
+    return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKey);
+      document.body.classList.remove("notif-lock-scroll");
+    };
   }, [open]);
-
-  const handleToggle = () => {
-    if (!open) {
-      const rect = buttonRef.current?.getBoundingClientRect();
-      if (rect) {
-        if (isMobile) {
-          setPopupPosition({
-            top: 60,
-            left: 10,
-          });
-        } else {
-          setPopupPosition({
-            top: rect.top - 10,
-            left: rect.right + 10,
-          });
-        }
-      }
-    }
-    setOpen((o) => !o);
-  };
 
   const unread = notifications.filter((n) => !n.isRead);
   const read = notifications.filter((n) => n.isRead);
@@ -113,269 +89,92 @@ export default function NotificationBell() {
     new Date(d).toLocaleString("en-US", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
   const popupContent = open && (
-    <div
-      ref={popupRef}
-      style={{
-        position: "fixed",
-        top: popupPosition.top,
-        left: popupPosition.left,
-        width: isMobile ? "calc(100% - 20px)" : "360px",
-        maxHeight: isMobile ? "80vh" : "460px",
-        display: "flex",
-        flexDirection: "column",
-        background: "#FFFFFF",
-        borderRadius: "16px",
-        boxShadow: "0 16px 40px rgba(0,0,0,0.15)",
-        border: "1px solid #E4E9ED",
-        zIndex: 9999,
-        fontFamily: "'Inter', sans-serif",
-        overflow: "hidden",
-        transformOrigin: "top left",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          padding: "14px 18px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          background: "#02457A",
-          borderBottom: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <strong style={{ color: "#FFFFFF", fontFamily: "'Space Grotesk', sans-serif", fontSize: "0.98rem" }}>
-          Notifications
-        </strong>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          {unread.length > 0 && (
-            <button
-              onClick={handleMarkAllAsRead}
-              title="Mark all as read"
-              style={{
-                background: "rgba(255,255,255,0.12)",
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-                padding: "5px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#B0D9F0",
-                transition: "background 0.2s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
-            >
-              <Check size={16} />
+    <>
+      <div className="notif-backdrop" onClick={() => setOpen(false)} />
+      <div ref={popupRef} className="notif-panel" role="dialog" aria-label="Notifications">
+        <div className="notif-panel-grip" />
+
+        <div className="notif-panel-header">
+          <strong>Notifications</strong>
+          <div className="notif-panel-actions">
+            {unread.length > 0 && (
+              <button onClick={handleMarkAllAsRead} title="Mark all as read" className="notif-icon-btn">
+                <Check size={16} />
+              </button>
+            )}
+            <button onClick={() => setOpen(false)} className="notif-icon-btn" aria-label="Close">
+              <X size={16} />
             </button>
-          )}
+          </div>
+        </div>
+
+        <div className="notif-tabs">
           <button
-            onClick={() => setOpen(false)}
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              padding: "5px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#CDD6F0",
-              transition: "background 0.2s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.08)")}
+            onClick={() => setTab("unread")}
+            className={`notif-tab ${tab === "unread" ? "active" : ""}`}
           >
-            <X size={16} />
+            Unread {unread.length > 0 && `(${unread.length})`}
+          </button>
+          <button
+            onClick={() => setTab("read")}
+            className={`notif-tab ${tab === "read" ? "active" : ""}`}
+          >
+            Read
           </button>
         </div>
-      </div>
 
-      {/* Tabs */}
-      <div style={{ display: "flex", gap: "20px", padding: "0 16px", borderBottom: "1px solid #E4E9ED", background: "#F8FAFC" }}>
-        <button
-          onClick={() => setTab("unread")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "10px 0 9px",
-            fontWeight: 700,
-            fontSize: "0.82rem",
-            color: tab === "unread" ? "#02457A" : "#6B7A8F",
-            borderBottom: tab === "unread" ? "2px solid #02457A" : "2px solid transparent",
-            transition: "color 0.2s, border-color 0.2s",
-          }}
-        >
-          Unread {unread.length > 0 && `(${unread.length})`}
-        </button>
-        <button
-          onClick={() => setTab("read")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "10px 0 9px",
-            fontWeight: 700,
-            fontSize: "0.82rem",
-            color: tab === "read" ? "#02457A" : "#6B7A8F",
-            borderBottom: tab === "read" ? "2px solid #02457A" : "2px solid transparent",
-            transition: "color 0.2s, border-color 0.2s",
-          }}
-        >
-          Read
-        </button>
-      </div>
-
-      {/* List */}
-      <div style={{ overflowY: "auto", flex: 1, padding: "4px 0" }}>
-        {visible.length === 0 ? (
-          <p style={{ color: "#6B7A8F", padding: "24px 16px", margin: 0, fontSize: "0.85rem", textAlign: "center" }}>
-            {tab === "unread" ? "No unread notifications." : "No read notifications."}
-          </p>
-        ) : (
-          visible.map((n) => {
-            const Icon = TYPE_ICONS[n.type] || <Bell size={16} />;
-            return (
-              <div
-                key={n.id}
-                onClick={() => !n.isRead && handleMarkAsRead(n.id)}
-                style={{
-                  padding: "12px 16px",
-                  borderBottom: "1px solid #ECF0F3",
-                  cursor: n.isRead ? "default" : "pointer",
-                  display: "flex",
-                  gap: "12px",
-                  transition: "background 0.15s",
-                  background: n.isRead ? "transparent" : "#F0F6FF",
-                }}
-                onMouseEnter={(e) => {
-                  if (!n.isRead) e.currentTarget.style.background = "#E3EDFA";
-                }}
-                onMouseLeave={(e) => {
-                  if (!n.isRead) e.currentTarget.style.background = "#F0F6FF";
-                }}
-              >
+        <div className="notif-list">
+          {visible.length === 0 ? (
+            <p className="notif-empty">
+              {tab === "unread" ? "No unread notifications." : "No read notifications."}
+            </p>
+          ) : (
+            visible.map((n) => {
+              const Icon = TYPE_ICONS[n.type] || <Bell size={16} />;
+              return (
                 <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: "50%",
-                    background: n.isRead ? "#F1F3F8" : "#E3EDFA",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    color: n.isRead ? "#6B7A8F" : "#02457A",
-                  }}
+                  key={n.id}
+                  onClick={() => !n.isRead && handleMarkAsRead(n.id)}
+                  className={`notif-row ${n.isRead ? "is-read" : "is-unread"}`}
                 >
-                  {Icon}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px" }}>
-                    <span
-                      style={{
-                        fontSize: "0.65rem",
-                        fontWeight: 700,
-                        color: "#02457A",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.05em",
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}
-                    >
-                      {TYPE_LABELS[n.type] || n.type}
-                    </span>
-                    <span style={{ fontSize: "0.68rem", color: "#6B7A8F", fontFamily: "'JetBrains Mono', monospace", whiteSpace: "nowrap" }}>
-                      {fmt(n.createdAt)}
-                    </span>
+                  <div className="notif-row-icon">{Icon}</div>
+                  <div className="notif-row-body">
+                    <div className="notif-row-top">
+                      <span className="notif-row-type">{TYPE_LABELS[n.type] || n.type}</span>
+                      <span className="notif-row-time">{fmt(n.createdAt)}</span>
+                    </div>
+                    <p className="notif-row-msg">{n.message}</p>
+                    {n.type === "waiting_list" && (
+                      <button
+                        onClick={(e) => handleGoToWaitingList(e, n.id)}
+                        className="notif-cta"
+                      >
+                        Update time
+                      </button>
+                    )}
                   </div>
-                  <p style={{ margin: "4px 0 0", fontSize: "0.85rem", color: "#1A2A3A", lineHeight: 1.4 }}>{n.message}</p>
-                  {n.type === "waiting_list" && (
-                    <button
-                      onClick={(e) => handleGoToWaitingList(e, n.id)}
-                      style={{
-                        marginTop: "6px",
-                        background: "#E3EDFA",
-                        color: "#02457A",
-                        border: "none",
-                        borderRadius: "30px",
-                        padding: "3px 14px",
-                        fontSize: "0.7rem",
-                        fontWeight: 700,
-                        cursor: "pointer",
-                        transition: "background 0.2s",
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "#D0E0F5")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "#E3EDFA")}
-                    >
-                      Update time
-                    </button>
-                  )}
+                  {!n.isRead && <span className="notif-dot" />}
                 </div>
-                {!n.isRead && (
-                  <span
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      background: "#02457A",
-                      flexShrink: 0,
-                      marginTop: "8px",
-                    }}
-                  />
-                )}
-              </div>
-            );
-          })
-        )}
+              );
+            })
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 
   return (
-    <div ref={containerRef} style={{ position: "relative" }}>
+    <div className="notif-trigger-wrap">
       <button
         ref={buttonRef}
-        onClick={handleToggle}
+        onClick={() => setOpen((o) => !o)}
         title="Notifications"
         aria-label="Notifications"
-        style={{
-          position: "relative",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          padding: "4px",
-          color: "#CCD4DE",
-          transition: "color 0.2s",
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = "#ECEEF0")}
-        onMouseLeave={(e) => (e.currentTarget.style.color = "#CCD4DE")}
+        className="notif-trigger"
       >
         <Bell size={20} />
         {unread.length > 0 && (
-          <span
-            style={{
-              position: "absolute",
-              top: -4,
-              right: -4,
-              background: "#EF4444",
-              color: "white",
-              fontSize: "0.6rem",
-              fontWeight: 700,
-              borderRadius: "50%",
-              minWidth: "18px",
-              height: "18px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 4px",
-              boxShadow: "0 0 0 2px #323954",
-              lineHeight: 1,
-            }}
-          >
-            {unread.length > 9 ? "9+" : unread.length}
-          </span>
+          <span className="notif-badge">{unread.length > 9 ? "9+" : unread.length}</span>
         )}
       </button>
 
