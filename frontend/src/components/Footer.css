@@ -27,6 +27,15 @@
 }
 
 /* --- Responsive --- */
+/* Le footer ne fonctionne pas avec la bottom-nav mobile (espace trop
+   contraint, double barre en bas d'écran) : on le masque complètement
+   sur téléphone et on le garde uniquement à partir des tablettes. */
+@media (max-width: 768px) {
+  .app-footer {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .app-footer {
     padding: 12px 16px;
