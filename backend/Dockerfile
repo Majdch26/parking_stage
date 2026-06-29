@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY . .
+RUN ls -la
 RUN dotnet restore parkinguniversitysystem.csproj
 RUN dotnet publish parkinguniversitysystem.csproj -c Release -o /app
 
