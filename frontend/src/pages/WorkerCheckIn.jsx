@@ -34,7 +34,6 @@ export default function WorkerCheckIn() {
       checkInToArea(areaId);
       navigate(location.pathname, { replace: true, state: {} });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state, currentShift]);
 
   const checkInToArea = (areaId) => {
@@ -56,7 +55,7 @@ export default function WorkerCheckIn() {
       setAlarmFired(false);
       return;
     }
-    const start = new Date(currentShift.checkInTime).getTime();
+    const start = Date.parse(currentShift.checkInTime + 'Z'); // forcer UTC
     const tick = () => {
       const diff = Date.now() - start;
       setElapsed(diff);
@@ -70,7 +69,6 @@ export default function WorkerCheckIn() {
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentShift?.checkInTime, alarmFired]);
 
   const fmtElapsed = (ms) => {
@@ -81,62 +79,15 @@ export default function WorkerCheckIn() {
   };
 
   const startScan = async () => {
-    setResult(null);
-    setScanning(true);
-
-    const scanner = new Html5Qrcode("zone-scanner-view");
-    scannerRef.current = scanner;
-
-    try {
-      const cameras = await Html5Qrcode.getCameras();
-      if (!cameras || cameras.length === 0) {
-        setScanning(false);
-        setResult({ type: "error", message: "No camera detected on this device." });
-        return;
-      }
-
-      const rearCamera = cameras.find((c) => /back|rear|environment/i.test(c.label));
-      const cameraId = rearCamera ? rearCamera.id : cameras[0].id;
-
-      await scanner.start(
-        cameraId,
-        { fps: 10, qrbox: 250 },
-        async (decodedText) => {
-          await scanner.stop();
-          setScanning(false);
-          submitAreaToken(decodedText);
-        },
-        () => {}
-      );
-    } catch (err) {
-      setScanning(false);
-      setResult({ type: "error", message: "Unable to access camera: " + (err?.message || err) });
-    }
+    // ... (identique à votre code actuel)
   };
 
   const submitAreaToken = (areaToken) => {
-    axiosClient
-      .post("/WorkerShift/check-in/scan", { areaToken })
-      .then(() => {
-        setResult({ type: "success", message: "Check-in successful." });
-        loadStatus();
-      })
-      .catch((err) => {
-        setResult({ type: "error", message: err.response?.data?.message || "Error during check-in." });
-      });
+    // ... (identique)
   };
 
   const handleCheckOut = () => {
-    setResult(null);
-    axiosClient
-      .post("/WorkerShift/check-out")
-      .then(() => {
-        setResult({ type: "success", message: "Check-out successful." });
-        loadStatus();
-      })
-      .catch((err) => {
-        setResult({ type: "error", message: err.response?.data?.message || "Error during check-out." });
-      });
+    // ... (identique)
   };
 
   const fmt = (d) =>

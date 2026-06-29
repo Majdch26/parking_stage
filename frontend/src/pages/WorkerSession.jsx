@@ -25,7 +25,8 @@ export default function WorkerSession() {
       setElapsed(0);
       return;
     }
-    const start = new Date(shift.checkInTime).getTime();
+    // Forcer UTC pour éviter le décalage horaire
+    const start = Date.parse(shift.checkInTime + 'Z');
     const tick = () => setElapsed(Date.now() - start);
     tick();
     const interval = setInterval(tick, 1000);
