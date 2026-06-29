@@ -98,7 +98,6 @@ export default function Navbar() {
           />
           <circle cx="24" cy="20" r="3.4" fill="#fff" />
         </svg>
-        <span className="logo-text">UPark</span>
       </Link>
 
       <nav className="nav">

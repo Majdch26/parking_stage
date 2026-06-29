@@ -26,6 +26,9 @@ function ReservationContent() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // État pour les compteurs
+  const [countdown, setCountdown] = useState({ startIn: null, left: null });
+
   const todayIso = new Date().toLocaleDateString("en-CA");
 
   const loadReservations = () => {
@@ -46,6 +49,44 @@ function ReservationContent() {
     axiosClient.get("/Vehicle/mine").then((res) => setVehicles(res.data));
     loadReservations();
   }, []);
+
+  // Mise à jour des compteurs toutes les secondes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const active = myReservations?.find(
+        (r) => r.status === "pending" || r.status === "confirmed"
+      );
+      if (!active) {
+        setCountdown({ startIn: null, left: null });
+        return;
+      }
+
+      const now = new Date();
+      const start = new Date(active.reservationDate + "T" + active.scheduledEntryTime);
+      const end = new Date(active.reservationDate + "T" + active.scheduledEndTime);
+
+      const startDiff = start - now;
+      const endDiff = end - now;
+
+      let startIn = null;
+      let left = null;
+
+      if (startDiff > 0) {
+        // Réservation future
+        startIn = Math.floor(startDiff / 1000);
+      } else if (endDiff > 0) {
+        // Réservation en cours
+        left = Math.floor(endDiff / 1000);
+      } else {
+        // Réservation terminée
+        left = 0;
+      }
+
+      setCountdown({ startIn, left });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [myReservations]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -138,6 +179,16 @@ function ReservationContent() {
 
   const fmtTime = (t) => (typeof t === "string" ? t.slice(0, 5) : t);
 
+  // Fonction pour formater les secondes en HH:MM:SS
+  const formatDuration = (seconds) => {
+    if (seconds === null || seconds === undefined) return "—";
+    if (seconds <= 0) return "00:00:00";
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  };
+
   return (
     <Container style={{ maxWidth: "760px", paddingTop: "24px", paddingBottom: "48px" }}>
       <div className="upk-banner">
@@ -193,6 +244,41 @@ function ReservationContent() {
             })}{" "}
             from {fmtTime(activeReservation.scheduledEntryTime)} to {fmtTime(activeReservation.scheduledEndTime)}
           </p>
+
+          {/* AFFICHAGE DES COMPTEURS */}
+          <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", marginBottom: "16px" }}>
+            {countdown.startIn !== null && countdown.startIn > 0 && (
+              <div style={{ background: "#eaf1ff", padding: "10px 16px", borderRadius: "12px", flex: "1 1 auto" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.06em", color: "#3b82f6", fontWeight: 700 }}>
+                  Starts in
+                </div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "1.3rem", fontWeight: 700, color: "#02457A" }}>
+                  {formatDuration(countdown.startIn)}
+                </div>
+              </div>
+            )}
+            {countdown.left !== null && countdown.left > 0 && (
+              <div style={{ background: "#e8faf0", padding: "10px 16px", borderRadius: "12px", flex: "1 1 auto" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.06em", color: "#16a34a", fontWeight: 700 }}>
+                  Time left
+                </div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "1.3rem", fontWeight: 700, color: "#0e9d6b" }}>
+                  {formatDuration(countdown.left)}
+                </div>
+              </div>
+            )}
+            {countdown.left !== null && countdown.left <= 0 && countdown.startIn === null && (
+              <div style={{ background: "#fdeeee", padding: "10px 16px", borderRadius: "12px", flex: "1 1 auto" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.06em", color: "#ef4444", fontWeight: 700 }}>
+                  Status
+                </div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "1.1rem", fontWeight: 700, color: "#dc3545" }}>
+                  Ended
+                </div>
+              </div>
+            )}
+          </div>
+
           <span className="upk-pill blue mb-3" style={{ display: "inline-flex" }}>{activeReservation.status}</span>
           <br />
           <button className="upk-btn upk-btn-danger mt-2" onClick={() => handleCancel(activeReservation.id)}>

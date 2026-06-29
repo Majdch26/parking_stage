@@ -7,7 +7,7 @@ export default function AppLayout({ children }) {
     <>
       <Navbar />
       <div className="app-shell">
-        <div style={{ flex: 1 }}>{children}</div>
+        <div className="page-content">{children}</div>
         <Footer />
       </div>
       <ChatBox />

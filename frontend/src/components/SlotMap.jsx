@@ -28,7 +28,7 @@ const STATUS_COLOR = {
 };
 
 function CarGlyph({ status, selected }) {
-  const color = selected ? "#3b82f6" : STATUS_COLOR[status] || "#9aa4b8";
+  const color = selected ? "#018ABE" : STATUS_COLOR[status] || "#9aa4b8";
   const filled = status === "occupied" || selected;
   const dashed = status === "reserved" || status === "maintenance";
   return (
