@@ -16,6 +16,17 @@ const T = {
 const FONT_DISPLAY = "'Space Grotesk', sans-serif";
 const FONT_MONO = "'JetBrains Mono', monospace";
 
+function naturalSort(a, b) {
+  const re = /^([A-Za-z]+)(\d+)$/;
+  const matchA = a.slotNumber.match(re);
+  const matchB = b.slotNumber.match(re);
+  if (matchA && matchB) {
+    if (matchA[1] !== matchB[1]) return matchA[1].localeCompare(matchB[1]);
+    return Number(matchA[2]) - Number(matchB[2]);
+  }
+  return a.slotNumber.localeCompare(b.slotNumber);
+}
+
 const STATUS_MAP = { available: "free", occupied: "occ", reserved: "res", maintenance: "maint" };
 const STATUS_LABEL_FR = { free: "Libre", occ: "Occupée", res: "Réservée", maint: "Maintenance", mine: "Votre place" };
 
@@ -115,7 +126,7 @@ export default function ParkingStatus() {
   const loadSlotsForArea = (areaId) => {
     axiosClient
       .get(`/Parking/areas/${areaId}/slots/map`)
-      .then((res) => setSlotsByArea((prev) => ({ ...prev, [areaId]: res.data })))
+      .then((res) => setSlotsByArea((prev) => ({ ...prev, [areaId]: [...res.data].sort(naturalSort) })))
       .catch(() => {});
   };
 

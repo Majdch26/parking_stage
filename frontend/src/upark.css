@@ -960,7 +960,7 @@
     .chat-box-popup {
       width: 280px;
       right: 10px;
-      bottom: calc(148px + env(safe-area-inset-bottom));
+      bottom: calc(152px + env(safe-area-inset-bottom));
     }
 
     /* Toast (cohérent avec le resserrement déjà appliqué par style.css
@@ -993,7 +993,7 @@
     /* Contenu */
     main.content {
       padding: 12px !important;
-      margin-bottom: calc(70px + env(safe-area-inset-bottom)) !important;
+      margin-bottom: calc(74px + env(safe-area-inset-bottom)) !important;
     }
   
     /* KPI : une colonne */
@@ -1181,7 +1181,7 @@
     .chat-box-popup {
       width: calc(100% - 20px) !important;
       right: 10px !important;
-      bottom: calc(148px + env(safe-area-inset-bottom)) !important;
+      bottom: calc(152px + env(safe-area-inset-bottom)) !important;
       max-height: 400px !important;
     }
     .chat-box-popup input {
@@ -1210,7 +1210,7 @@
     .chat-fab {
       width: 48px !important;
       height: 48px !important;
-      bottom: calc(86px + env(safe-area-inset-bottom)) !important;
+      bottom: calc(90px + env(safe-area-inset-bottom)) !important;
       right: 16px !important;
     }
     .chat-fab svg {
@@ -1343,7 +1343,7 @@
      systématiquement rester au-dessus de cette barre, jamais la chevaucher. */
   @media (max-width: 768px) {
     .chat-fab {
-      bottom: calc(86px + env(safe-area-inset-bottom));
+      bottom: calc(90px + env(safe-area-inset-bottom));
       right: 16px;
       width: 48px;
       height: 48px;
@@ -1351,7 +1351,7 @@
       z-index: var(--z-chat-fab);
     }
     .chat-box-popup {
-      bottom: calc(148px + env(safe-area-inset-bottom));
+      bottom: calc(152px + env(safe-area-inset-bottom));
       right: 10px;
       width: calc(100% - 20px);
       max-height: 65vh;
@@ -1673,7 +1673,7 @@
       top: auto;
       left: 10px;
       right: 10px;
-      bottom: calc(86px + env(safe-area-inset-bottom));
+      bottom: calc(90px + env(safe-area-inset-bottom));
       width: auto;
       max-height: 70vh;
       border-radius: 20px;
@@ -1688,7 +1688,7 @@
 
   @media (max-width: 400px) {
     .notif-panel {
-      bottom: calc(78px + env(safe-area-inset-bottom));
+      bottom: calc(82px + env(safe-area-inset-bottom));
     }
   }
 

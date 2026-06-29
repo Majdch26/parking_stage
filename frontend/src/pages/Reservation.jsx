@@ -47,10 +47,13 @@ function ReservationContent() {
 
   useEffect(() => {
     axiosClient.get("/Parking/areas").then((res) => {
-      setAreas(res.data);
-      if (res.data.length > 0) {
-        const zoneA = res.data.find((a) => a.areaName === "Zone A");
-        setForm((prev) => ({ ...prev, areaId: String((zoneA || res.data[0]).id) }));
+      // "Gate" est une zone technique réservée à l'affectation des workers,
+      // ce n'est pas une zone de stationnement : on ne la propose jamais ici.
+      const visible = res.data.filter((a) => a.areaName?.trim().toLowerCase() !== "gate");
+      setAreas(visible);
+      if (visible.length > 0) {
+        const zoneA = visible.find((a) => a.areaName === "Zone A");
+        setForm((prev) => ({ ...prev, areaId: String((zoneA || visible[0]).id) }));
       }
     });
     axiosClient.get("/Vehicle/mine").then((res) => setVehicles(res.data));
