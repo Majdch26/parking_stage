@@ -4,7 +4,8 @@ import { Container, Form, Input } from "reactstrap";
 import { CalendarCheck } from "lucide-react";
 import axiosClient from "../api/axiosClient";
 import SlotMap from "../components/SlotMap";
-import AppLayout from "../components/AppLayout";
+import SessionGate from "./SessionGate";
+import AppLayout from "../components/AppLayout"; // ← import du layout principal
 import "../upark.css";
 
 function ReservationContent() {
@@ -28,6 +29,16 @@ function ReservationContent() {
 
   const todayIso = new Date().toLocaleDateString("en-CA");
 
+  // L'API renvoie reservationDate en ISO complet (ex: "2026-06-30T00:00:00") :
+  // on isole la partie date avant de la découper, sinon split("-") casse le
+  // jour en lui collant la partie heure ("30T00:00:00" -> NaN -> Invalid Date).
+  const createLocalDate = (dateStr, timeStr) => {
+    if (!dateStr || !timeStr) return null;
+    const [year, month, day] = dateStr.split("T")[0].split("-").map(Number);
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return new Date(year, month - 1, day, hours, minutes);
+  };
+
   const loadReservations = () => {
     axiosClient
       .get("/Reservation/mine")
@@ -46,57 +57,6 @@ function ReservationContent() {
     axiosClient.get("/Vehicle/mine").then((res) => setVehicles(res.data));
     loadReservations();
   }, []);
-
-  // Helper pour créer un objet Date en heure locale
-  const createLocalDate = (dateStr, timeStr) => {
-    if (!dateStr || !timeStr) return null;
-    const [year, month, day] = dateStr.split("-").map(Number);
-    const [hours, minutes] = timeStr.split(":").map(Number);
-    return new Date(year, month - 1, day, hours, minutes);
-  };
-
-  // Mise à jour des compteurs toutes les secondes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const active = myReservations?.find(
-        (r) => r.status === "pending" || r.status === "confirmed"
-      );
-      if (!active) {
-        setCountdown({ startIn: null, left: null });
-        return;
-      }
-
-      const now = new Date();
-      const start = createLocalDate(active.reservationDate, active.scheduledEntryTime);
-      const end = createLocalDate(active.reservationDate, active.scheduledEndTime);
-
-      if (!start || !end) {
-        setCountdown({ startIn: null, left: null });
-        return;
-      }
-
-      const startDiff = start - now;
-      const endDiff = end - now;
-
-      let startIn = null;
-      let left = null;
-
-      if (startDiff > 0) {
-        // Réservation future
-        startIn = Math.floor(startDiff / 1000);
-      } else if (endDiff > 0) {
-        // Réservation en cours
-        left = Math.floor(endDiff / 1000);
-      } else {
-        // Réservation terminée
-        left = 0;
-      }
-
-      setCountdown({ startIn, left });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [myReservations]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -135,6 +95,52 @@ function ReservationContent() {
     (r) => r.status === "pending" || r.status === "confirmed"
   );
 
+  // Compteurs (avant le début / temps restant) mis à jour chaque seconde.
+  useEffect(() => {
+    const tick = () => {
+      if (!activeReservation) {
+        setCountdown({ startIn: null, left: null });
+        return;
+      }
+
+      const start = createLocalDate(activeReservation.reservationDate, activeReservation.scheduledEntryTime);
+      const end = createLocalDate(activeReservation.reservationDate, activeReservation.scheduledEndTime);
+      if (!start || !end) {
+        setCountdown({ startIn: null, left: null });
+        return;
+      }
+
+      const now = new Date();
+      const startDiff = start - now;
+      const endDiff = end - now;
+
+      if (startDiff > 0) {
+        setCountdown({ startIn: Math.floor(startDiff / 1000), left: null });
+      } else if (endDiff > 0) {
+        setCountdown({ startIn: null, left: Math.floor(endDiff / 1000) });
+      } else {
+        setCountdown({ startIn: null, left: 0 });
+      }
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [activeReservation?.id, activeReservation?.reservationDate, activeReservation?.scheduledEntryTime, activeReservation?.scheduledEndTime]);
+
+  // "23h 03m 33s" / "03m 33s" / "33s" — toujours 2 chiffres dès qu'une unité plus grande est affichée.
+  const formatDuration = (seconds) => {
+    if (seconds === null || seconds === undefined) return "—";
+    if (seconds <= 0) return "0s";
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    const pad = (n) => String(n).padStart(2, "0");
+    if (h > 0) return `${h}h ${pad(m)}m ${pad(s)}s`;
+    if (m > 0) return `${pad(m)}m ${pad(s)}s`;
+    return `${s}s`;
+  };
+
   const isLotFull = areas.length > 0 && areas.every((a) => a.availableSlots === 0);
 
   const handleSubmit = async (e) => {
@@ -143,7 +149,7 @@ function ReservationContent() {
     setSuccess("");
 
     if (form.scheduledEndTime <= form.scheduledEntryTime) {
-      setError("End time must be after start time.");
+      setError("L'heure de fin doit être après l'heure de début.");
       return;
     }
 
@@ -159,7 +165,7 @@ function ReservationContent() {
       }
 
       await axiosClient.post("/Reservation", payload);
-      setSuccess("Reservation created successfully!");
+      setSuccess("Réservation effectuée avec succès !");
       const zoneA = areas.find((a) => a.areaName === "Zone A");
       setForm({
         areaId: (zoneA || areas[0]) ? String((zoneA || areas[0]).id) : "",
@@ -173,7 +179,7 @@ function ReservationContent() {
       setSlotWindows(null);
       loadReservations();
     } catch (err) {
-      setError(err.response?.data?.message || "Error while reserving.");
+      setError(err.response?.data?.message || "Erreur lors de la réservation.");
     }
   };
 
@@ -183,25 +189,11 @@ function ReservationContent() {
       await axiosClient.post(`/Reservation/${id}/cancel`);
       loadReservations();
     } catch (err) {
-      setError(err.response?.data?.message || "Error while cancelling.");
+      setError(err.response?.data?.message || "Erreur lors de l'annulation.");
     }
   };
 
   const fmtTime = (t) => (typeof t === "string" ? t.slice(0, 5) : t);
-
-  // Formatage : 2h 30m 45s ou 30m 45s ou 45s
-  const formatDuration = (seconds) => {
-    if (seconds === null || seconds === undefined) return "—";
-    if (seconds <= 0) return "0s";
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    const parts = [];
-    if (h > 0) parts.push(`${h}h`);
-    if (m > 0) parts.push(`${m}m`);
-    if (s > 0 || parts.length === 0) parts.push(`${s}s`);
-    return parts.join(" ");
-  };
 
   return (
     <Container style={{ maxWidth: "760px", paddingTop: "24px", paddingBottom: "48px" }}>
@@ -259,11 +251,10 @@ function ReservationContent() {
             from {fmtTime(activeReservation.scheduledEntryTime)} to {fmtTime(activeReservation.scheduledEndTime)}
           </p>
 
-          {/* AFFICHAGE DES COMPTEURS */}
           <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", marginBottom: "16px" }}>
             {countdown.startIn !== null && countdown.startIn > 0 && (
               <div style={{ background: "#eaf1ff", padding: "10px 16px", borderRadius: "12px", flex: "1 1 auto" }}>
-                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.06em", color: "#3b82f6", fontWeight: 700 }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.06em", color: "#018ABE", fontWeight: 700 }}>
                   Starts in
                 </div>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "1.3rem", fontWeight: 700, color: "#02457A" }}>
@@ -281,24 +272,13 @@ function ReservationContent() {
                 </div>
               </div>
             )}
-            {countdown.left !== null && countdown.left <= 0 && countdown.startIn === null && (
+            {countdown.left === 0 && (
               <div style={{ background: "#fdeeee", padding: "10px 16px", borderRadius: "12px", flex: "1 1 auto" }}>
                 <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.06em", color: "#ef4444", fontWeight: 700 }}>
                   Status
                 </div>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "1.1rem", fontWeight: 700, color: "#dc3545" }}>
                   Ended
-                </div>
-              </div>
-            )}
-            {/* Si aucun timer n'est affiché, on montre le statut normalement */}
-            {countdown.startIn === null && countdown.left === null && (
-              <div style={{ background: "#f1f3f8", padding: "10px 16px", borderRadius: "12px", flex: "1 1 auto" }}>
-                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.06em", color: "#6b7280", fontWeight: 700 }}>
-                  Status
-                </div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "1.1rem", fontWeight: 700, color: "#02457A" }}>
-                  {activeReservation.status}
                 </div>
               </div>
             )}
@@ -451,8 +431,10 @@ function ReservationContent() {
 
 export default function Reservation() {
   return (
-    <AppLayout>
-      <ReservationContent />
-    </AppLayout>
+    <SessionGate>
+      <AppLayout>
+        <ReservationContent />
+      </AppLayout>
+    </SessionGate>
   );
 }
