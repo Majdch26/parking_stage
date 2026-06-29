@@ -268,7 +268,7 @@
     flex-direction: row;
     align-items: center;
     padding: 0 6px;
-    overflow: visible;
+    overflow: hidden;
     box-shadow: 0 12px 32px rgba(2, 18, 43, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06);
     border-right: none;
     border-top: none;
@@ -294,8 +294,10 @@
   .sidebar .nav {
     flex-direction: row;
     flex: 1;
+    min-width: 0;
     gap: 4px;
     align-items: center;
+    flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x proximity;
@@ -320,9 +322,11 @@
     margin: 0;
     border-radius: 10px;
     width: 60px;
+    min-width: 60px;
     align-items: center;
     justify-content: center;
     scroll-snap-align: start;
+    white-space: nowrap;
   }
 
   /* Texte caché sur mobile : icônes seules pour que tout tienne sur une ligne */
