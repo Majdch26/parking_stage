@@ -28,11 +28,19 @@ namespace ParkingUniversitySystem.Controllers
 
         /// <summary>GET /WorkerChat/messages/since/{afterId} -- cheap polling: only new messages.</summary>
         [HttpGet("messages/since/{afterId:int}")]
-        public async Task<IActionResult> GetSince(int afterId)
-        {
-            var messages = await _chatEngine.GetSinceAsync(afterId);
-            return Ok(messages);
-        }
+public async Task<IActionResult> GetSince(int afterId)
+{
+    try
+    {
+        var messages = await _chatEngine.GetSinceAsync(afterId);
+        return Ok(messages);
+    }
+    catch (Exception ex)
+    {
+        // Loggez l'exception (par ex. avec ILogger)
+        return StatusCode(500, new { message = "Erreur interne : " + ex.Message });
+    }
+}
 
         /// <summary>POST /WorkerChat/messages -- send a message to the shared worker group chat.</summary>
         [HttpPost("messages")]
