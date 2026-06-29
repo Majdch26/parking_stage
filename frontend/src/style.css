@@ -42,6 +42,17 @@
      --r-lg: 20px;
      --r-xl: 28px;
      --r-pill: 999px;
+
+     /* Z-index scale — shared across the whole app (same numeric scale as
+        the --z-* variables defined in upark.css's :root, both files load
+        globally so either set of variables resolves the same way):
+        content (0) < sticky topbar (20) < bottom-nav (800) <
+        chat-fab/popup (900-901) < toast/modal (1000) */
+     --z-sticky-header: 20;
+     --z-bottom-nav: 800;
+     --z-chat-fab: 900;
+     --z-chat-popup: 901;
+     --z-toast: 1000;
    }
    
    /* ============================================================
@@ -89,6 +100,9 @@
    /* ============================================================
       Background avec dégradés de bleus
       ============================================================ */
+   /* Stacking order de l'app (cohérent avec les variables --z-* de upark.css) :
+      bg-ambient (-1) < contenu < topbar sticky (20) < bottom-nav (800) <
+      chat-fab/popup (900-901) < toast (1000+). */
    .bg-ambient {
      position: fixed;
      inset: 0;
@@ -377,7 +391,7 @@
      border-bottom: 1px solid var(--blue-border);
      position: sticky;
      top: 0;
-     z-index: 20;
+     z-index: var(--z-sticky-header);
    }
    
    .page-title {
@@ -1469,23 +1483,35 @@
      align-items: center;
      justify-content: center;
      gap: 8px;
-     height: 40px;
+     height: 44px;
+     min-height: 44px;
      padding: 0 24px;
      border-radius: var(--r-pill);
      font-weight: 600;
      font-size: 12px;
      transition: all 0.25s ease;
    }
-   
+
    .btn-primary {
      color: white;
      background: linear-gradient(135deg, var(--blue-accent), var(--cyan-accent));
-     box-shadow: 0 4px 24px rgba(59, 130, 246, 0.15);
+     box-shadow: 0 4px 24px rgba(59, 130, 246, 0.18);
    }
-   
+
    .btn-primary:hover {
      transform: translateY(-2px);
-     box-shadow: 0 8px 40px rgba(59, 130, 246, 0.2);
+     box-shadow: 0 10px 40px rgba(59, 130, 246, 0.28);
+     filter: brightness(1.05);
+   }
+
+   .btn-primary:active {
+     transform: translateY(0);
+     box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+   }
+
+   .btn:focus-visible {
+     outline: 2px solid var(--blue-accent);
+     outline-offset: 2px;
    }
    
    .btn-ghost {
@@ -1557,14 +1583,15 @@
    .login-art {
      position: relative;
      overflow: hidden;
-     background: radial-gradient(ellipse 800px 600px at 30% 20%, rgba(59, 130, 246, 0.06), transparent 70%),
-       radial-gradient(ellipse 600px 500px at 80% 90%, rgba(34, 211, 238, 0.03), transparent 60%),
-       var(--blue-dark);
+     background: radial-gradient(ellipse 800px 600px at 30% 20%, rgba(59, 130, 246, 0.1), transparent 70%),
+       radial-gradient(ellipse 600px 500px at 80% 90%, rgba(34, 211, 238, 0.06), transparent 60%),
+       linear-gradient(165deg, var(--blue-mid) 0%, var(--blue-dark) 55%, var(--blue-deep) 100%);
      border-right: 1px solid var(--blue-border);
      display: flex;
      flex-direction: column;
      justify-content: space-between;
      padding: 48px 56px;
+     box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.35);
    }
    
    .login-art .brand-name {
@@ -1599,9 +1626,10 @@
      position: absolute;
      inset: 18px;
      border-radius: var(--r-lg);
-     background: rgba(0, 0, 0, 0.2);
+     background: rgba(0, 0, 0, 0.22);
      backdrop-filter: blur(12px);
      border: 1px solid var(--blue-border);
+     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
      padding: 22px;
    }
    
@@ -1689,25 +1717,43 @@
      align-items: center;
      justify-content: center;
      padding: 40px;
-     background: var(--blue-deep);
+     background:
+       radial-gradient(ellipse 500px 400px at 50% 0%, rgba(59, 130, 246, 0.04), transparent 70%),
+       var(--blue-deep);
    }
-   
+
    .login-form {
      width: 360px;
+     animation: formRise 0.5s cubic-bezier(0.16, 1, 0.3, 1);
    }
-   
+
+   @keyframes formRise {
+     from {
+       opacity: 0;
+       transform: translateY(10px);
+     }
+     to {
+       opacity: 1;
+       transform: none;
+     }
+   }
+
    .eyebrow {
      font-size: 10px;
      font-weight: 700;
      text-transform: uppercase;
-     letter-spacing: 0.08em;
-     color: var(--cyan-accent);
+     letter-spacing: 0.1em;
+     color: var(--cyan-glow);
    }
-   
+
    .login-form h1 {
      font-size: 32px;
-     color: var(--white);
+     font-family: 'Outfit', sans-serif;
+     background: linear-gradient(135deg, var(--white), var(--gray-light));
+     -webkit-background-clip: text;
+     -webkit-text-fill-color: transparent;
      margin: 8px 0 4px;
+     letter-spacing: -0.02em;
    }
    
    .login-form .sub {
@@ -1732,6 +1778,13 @@
      background: rgba(255, 255, 255, 0.01);
      transition: all 0.2s ease;
      position: relative;
+     min-height: 44px;
+   }
+
+   .role-pick label:hover {
+     border-color: var(--blue-border);
+     background: rgba(255, 255, 255, 0.025);
+     transform: translateY(-1px);
    }
    
    .role-pick input {
@@ -1803,12 +1856,22 @@
      border-radius: var(--r-sm);
      background: rgba(255, 255, 255, 0.02);
      border: 1px solid var(--blue-border-light);
-     transition: all 0.2s;
+     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
    }
-   
+
+   .field-input:hover {
+     border-color: var(--blue-border);
+     background: rgba(255, 255, 255, 0.03);
+   }
+
    .field-input:focus-within {
      border-color: var(--blue-accent);
-     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.04);
+     background: rgba(255, 255, 255, 0.03);
+     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+   }
+
+   .field-input:focus-within svg {
+     color: var(--blue-accent);
    }
    
    .field-input svg {
@@ -1835,8 +1898,8 @@
      justify-content: center;
      background: none;
      border: none;
-     padding: 4px;
-     margin: 0;
+     padding: 8px;
+     margin: 0 -8px 0 0;
      cursor: pointer;
      color: var(--gray-mid);
      border-radius: 6px;
@@ -1933,7 +1996,7 @@
      position: fixed;
      top: 24px;
      right: 24px;
-     z-index: 60;
+     z-index: var(--z-toast);
      display: flex;
      flex-direction: column;
      gap: 10px;
@@ -2196,7 +2259,8 @@
        font-size: 24px;
      }
      .field-input {
-       height: 42px;
+       min-height: 44px;
+       height: auto;
      }
      .field-input svg {
        width: 17px;

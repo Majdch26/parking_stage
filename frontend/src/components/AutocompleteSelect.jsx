@@ -58,52 +58,27 @@ export default function AutocompleteSelect({
   };
 
   return (
-    <div ref={containerRef} style={{ position: "relative" }}>
+    <div ref={containerRef} className="uac-wrap">
       <Input
+        className="uac-input"
         value={query}
         onChange={handleInputChange}
         onFocus={() => setIsOpen(true)}
         placeholder={placeholder}
         disabled={disabled}
         autoComplete="off"
-        style={{ borderRadius: "12px", border: "1px solid #e3e7f0" }}
       />
 
       {isOpen && !disabled && (
-        <div
-          className="autocomplete-dropdown"
-          style={{
-            position: "absolute",
-            top: "calc(100% + 6px)",
-            left: 0,
-            right: 0,
-            zIndex: 20,
-            background: "white",
-            border: "1px solid #e3e7f0",
-            borderRadius: "14px",
-            boxShadow: "0 16px 36px rgba(16,23,42,0.14)",
-            maxHeight: "220px",
-            overflowY: "auto",
-          }}
-        >
+        <div className="autocomplete-dropdown uac-dropdown">
           {filtered.length === 0 ? (
-            <div style={{ padding: "10px 14px", color: "#8a94a6", fontSize: "0.85rem" }}>{emptyMessage}</div>
+            <div className="uac-empty">{emptyMessage}</div>
           ) : (
             filtered.map((o) => (
               <div
                 key={o.id}
                 onClick={() => handlePick(o)}
-                style={{
-                  padding: "9px 14px",
-                  cursor: "pointer",
-                  fontSize: "0.9rem",
-                  color: "#10172a",
-                  background: String(o.id) === String(value) ? "#eaf1ff" : "white",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#f3f7ff")}
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = String(o.id) === String(value) ? "#eaf1ff" : "white")
-                }
+                className={`uac-option ${String(o.id) === String(value) ? "is-selected" : ""}`}
               >
                 {o.label}
               </div>

@@ -17,7 +17,10 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000;
+  /* Desktop rail sits below the mobile bottom-nav z-index (800, set in the
+     768px breakpoint below) so the same selector never has to fight the
+     chat widget (900/901) or toasts (1000) defined in upark.css. */
+  z-index: 50;
   background: #02457A;
   display: flex;
   flex-direction: column;
@@ -254,6 +257,9 @@
     background: #02457A;
     justify-content: space-between;
     gap: 0;
+    /* Becomes the bottom-nav here: must stay below the chat-fab (900/901)
+       and toast (1000) stack, but above page content. */
+    z-index: 800;
   }
 
   /* Le logo disparaît sur mobile : la place est précieuse */
