@@ -28,10 +28,17 @@ export default function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState("unread");
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
 
   const buttonRef = useRef(null);
   const popupRef = useRef(null);
   const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 480);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const load = () => {
     axiosClient.get("/Notification/mine").then((res) => setNotifications(res.data)).catch(() => {});
@@ -43,7 +50,6 @@ export default function NotificationBell() {
     return () => clearInterval(interval);
   }, []);
 
-  // Gestion du clic en dehors du pop-up et du bouton
   useEffect(() => {
     const handleClickOutside = (e) => {
       const isButton = buttonRef.current && buttonRef.current.contains(e.target);
@@ -60,15 +66,21 @@ export default function NotificationBell() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
-  // Calcul de la position du pop-up lors de l'ouverture
   const handleToggle = () => {
     if (!open) {
       const rect = buttonRef.current?.getBoundingClientRect();
       if (rect) {
-        setPopupPosition({
-          top: rect.top - 10, // aligné avec le haut du bouton (avec un léger ajustement)
-          left: rect.right + 10, // juste à droite du bouton
-        });
+        if (isMobile) {
+          setPopupPosition({
+            top: 60,
+            left: 10,
+          });
+        } else {
+          setPopupPosition({
+            top: rect.top - 10,
+            left: rect.right + 10,
+          });
+        }
       }
     }
     setOpen((o) => !o);
@@ -100,7 +112,6 @@ export default function NotificationBell() {
   const fmt = (d) =>
     new Date(d).toLocaleString("en-US", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
-  // Contenu du pop-up
   const popupContent = open && (
     <div
       ref={popupRef}
@@ -108,8 +119,8 @@ export default function NotificationBell() {
         position: "fixed",
         top: popupPosition.top,
         left: popupPosition.left,
-        width: "360px",
-        maxHeight: "460px",
+        width: isMobile ? "calc(100% - 20px)" : "360px",
+        maxHeight: isMobile ? "80vh" : "460px",
         display: "flex",
         flexDirection: "column",
         background: "#FFFFFF",
@@ -324,7 +335,6 @@ export default function NotificationBell() {
 
   return (
     <div ref={containerRef} style={{ position: "relative" }}>
-      {/* Bouton cloche */}
       <button
         ref={buttonRef}
         onClick={handleToggle}
@@ -369,7 +379,6 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {/* Pop-up rendu via un portail dans le body */}
       {createPortal(popupContent, document.body)}
     </div>
   );

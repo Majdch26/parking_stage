@@ -778,3 +778,601 @@
     overflow: hidden;
     background: #02457A;  /* ← Change ici pour la couleur de ton choix */
   }
+
+  /* ============================================================
+   UPark — Responsive complet (mobile first)
+   ============================================================ */
+
+/* --- Petits écrans (tablettes, grands mobiles) --- */
+@media (max-width: 992px) {
+    /* Page */
+    .app-shell {
+      margin-left: 0 !important;
+    }
+  
+    /* Sidebar : déjà gérée par Navbar.css, on ajuste le padding */
+    .sidebar {
+      padding: 0 8px !important;
+    }
+    .sidebar .logo {
+      margin-right: 6px !important;
+    }
+    .sidebar .nav a,
+    .sidebar .nav-bell button {
+      padding: 4px 6px !important;
+      font-size: 9px !important;
+    }
+    .sidebar .nav a .nav-label {
+      font-size: 7px !important;
+    }
+    .sidebar .bottom .logout .logout-label {
+      display: none !important;
+    }
+  
+    /* Contenu principal */
+    main.content {
+      padding: 16px !important;
+    }
+  
+    /* Cartes KPI */
+    .stat-row {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 12px !important;
+    }
+    .kpi .value {
+      font-size: 26px !important;
+    }
+  
+    /* Grilles de places */
+    .slot-grid {
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+    .zone-grid {
+      grid-template-columns: repeat(6, 1fr) !important;
+    }
+  
+    /* Mini-map */
+    .upk-lot-grid {
+      grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)) !important;
+    }
+  
+    /* Bandeaux */
+    .upk-banner,
+    .upk-welcome-banner {
+      padding: 20px !important;
+    }
+    .upk-banner h1,
+    .upk-welcome-banner h2 {
+      font-size: 1.3rem !important;
+    }
+  
+    /* Scan */
+    .scan-layout {
+      grid-template-columns: 1fr !important;
+      max-width: 100% !important;
+    }
+    .scan-field {
+      width: 180px !important;
+      height: 180px !important;
+    }
+    .qr-box {
+      width: 120px !important;
+      height: 120px !important;
+    }
+    .qr-box svg {
+      width: 100px !important;
+      height: 100px !important;
+    }
+  
+    /* Véhicules */
+    .veh-grid {
+      grid-template-columns: 1fr !important;
+    }
+  
+    /* Position (waiting list) */
+    .position-card {
+      flex-direction: column !important;
+      text-align: center !important;
+    }
+    .priority-pill {
+      margin-left: 0 !important;
+    }
+  
+    /* Notifications */
+    .notif-item {
+      flex-wrap: wrap !important;
+    }
+    .notif-time {
+      width: 100% !important;
+      text-align: left !important;
+      margin-left: 0 !important;
+      padding-top: 4px !important;
+    }
+  
+    /* Login */
+    .login-screen {
+      grid-template-columns: 1fr !important;
+    }
+    .login-art {
+      border-right: none !important;
+      border-bottom: 1px solid var(--border) !important;
+      padding: 24px !important;
+      min-height: 260px !important;
+    }
+    .lot {
+      width: 260px !important;
+      height: 200px !important;
+    }
+    .lot-watermark {
+      font-size: 140px !important;
+    }
+    .login-form-wrap {
+      padding: 24px !important;
+    }
+    .login-form {
+      width: 100% !important;
+    }
+    .role-pick {
+      grid-template-columns: 1fr !important;
+    }
+  
+    /* Chat */
+    .chat-box-popup {
+      width: 280px !important;
+      right: 10px !important;
+      bottom: 80px !important;
+    }
+  
+    /* Toast */
+    .toast-stack {
+      width: calc(100% - 24px) !important;
+      right: 12px !important;
+      top: 12px !important;
+    }
+  }
+  
+  /* --- Très petits écrans (mobiles ≤ 480px) --- */
+  @media (max-width: 480px) {
+    /* Polices */
+    body {
+      font-size: 14px !important;
+    }
+    h1 {
+      font-size: 1.5rem !important;
+    }
+    h2 {
+      font-size: 1.2rem !important;
+    }
+    h3 {
+      font-size: 1rem !important;
+    }
+  
+    /* Sidebar (déjà en bas) */
+    .sidebar {
+      height: 60px !important;
+      padding: 0 4px !important;
+    }
+    .sidebar .logo svg {
+      width: 30px !important;
+      height: 30px !important;
+    }
+    .sidebar .nav a,
+    .sidebar .nav-bell button {
+      padding: 2px 4px !important;
+      font-size: 7px !important;
+    }
+    .sidebar .nav a .nav-label {
+      font-size: 6px !important;
+    }
+    .sidebar .bottom .avatar {
+      width: 28px !important;
+      height: 28px !important;
+      font-size: 10px !important;
+    }
+    .sidebar .bottom .logout svg {
+      width: 16px !important;
+      height: 16px !important;
+    }
+  
+    /* Contenu */
+    main.content {
+      padding: 12px !important;
+      margin-bottom: 60px !important;
+    }
+  
+    /* KPI : une colonne */
+    .stat-row {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+    }
+    .kpi {
+      padding: 14px 16px !important;
+    }
+    .kpi .value {
+      font-size: 22px !important;
+    }
+  
+    /* Grilles de places */
+    .slot-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 6px !important;
+    }
+    .zone-grid {
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 6px !important;
+    }
+    .upk-lot-grid {
+      grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)) !important;
+      gap: 6px !important;
+    }
+    .upk-bay {
+      aspect-ratio: 0.8 !important;
+    }
+    .upk-bay .upk-bay-num {
+      font-size: 6px !important;
+    }
+    .upk-bay svg {
+      width: 40% !important;
+      height: 40% !important;
+    }
+  
+    /* Cartes */
+    .upk-card-pad {
+      padding: 16px !important;
+    }
+    .card-pad {
+      padding: 16px !important;
+    }
+  
+    /* Bandeaux */
+    .upk-banner,
+    .upk-welcome-banner {
+      padding: 16px !important;
+      border-radius: 16px !important;
+    }
+    .upk-banner h1,
+    .upk-welcome-banner h2 {
+      font-size: 1.1rem !important;
+    }
+    .upk-banner p,
+    .upk-welcome-banner .upk-welcome-role {
+      font-size: 0.75rem !important;
+    }
+    .upk-banner-icon,
+    .upk-welcome-icon {
+      width: 36px !important;
+      height: 36px !important;
+    }
+    .upk-banner-icon svg,
+    .upk-welcome-icon svg {
+      width: 18px !important;
+      height: 18px !important;
+    }
+  
+    /* Parking card */
+    .upk-parking-card .card-body {
+      padding: 16px !important;
+    }
+    .upk-parking-title {
+      font-size: 0.9rem !important;
+    }
+    .upk-legend {
+      gap: 8px !important;
+    }
+    .upk-legend-item {
+      font-size: 10px !important;
+    }
+  
+    /* Session / Violation cards */
+    .upk-session-card .card-body,
+    .upk-violation-card .card-body {
+      padding: 16px !important;
+    }
+    .upk-session-ticket {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 8px !important;
+    }
+    .upk-violation-number {
+      font-size: 26px !important;
+    }
+  
+    /* Scan */
+    .scan-card {
+      padding: 20px !important;
+    }
+    .scan-field {
+      width: 140px !important;
+      height: 140px !important;
+    }
+    .qr-box {
+      width: 100px !important;
+      height: 100px !important;
+    }
+    .qr-box svg {
+      width: 80px !important;
+      height: 80px !important;
+    }
+  
+    /* Formulaire */
+    .field-input {
+      height: 38px !important;
+      padding: 0 10px !important;
+    }
+    .field-input input {
+      font-size: 12px !important;
+    }
+    .upk-btn {
+      padding: 8px 16px !important;
+      font-size: 0.8rem !important;
+    }
+  
+    /* Notifications */
+    .notif-item {
+      padding: 12px 14px !important;
+    }
+    .notif-ic {
+      width: 30px !important;
+      height: 30px !important;
+    }
+    .notif-ic svg {
+      width: 14px !important;
+      height: 14px !important;
+    }
+    .notif-title-row .t {
+      font-size: 12px !important;
+    }
+    .notif-msg {
+      font-size: 11px !important;
+    }
+  
+    /* Login */
+    .login-art {
+      padding: 16px !important;
+    }
+    .login-art .brand-name {
+      font-size: 18px !important;
+    }
+    .lot {
+      width: 200px !important;
+      height: 160px !important;
+    }
+    .lot-watermark {
+      font-size: 100px !important;
+    }
+    .lot-frame {
+      inset: 10px !important;
+      padding: 12px !important;
+    }
+    .lot-grid {
+      gap: 6px !important;
+    }
+    .login-pitch h2 {
+      font-size: 20px !important;
+    }
+    .login-pitch p {
+      font-size: 12px !important;
+    }
+    .login-form h1 {
+      font-size: 24px !important;
+    }
+  
+    /* Chat flottant */
+    .chat-box-popup {
+      width: calc(100% - 20px) !important;
+      right: 10px !important;
+      bottom: 80px !important;
+      max-height: 400px !important;
+    }
+    .chat-box-popup input {
+      font-size: 0.8rem !important;
+      padding: 8px 12px !important;
+    }
+    .chat-box-popup button[type="submit"] {
+      width: 34px !important;
+      height: 34px !important;
+    }
+    .chat-box-popup .message {
+      font-size: 0.8rem !important;
+    }
+  
+    /* Toast */
+    .toast {
+      padding: 12px !important;
+      font-size: 12px !important;
+    }
+    .toast-ic {
+      width: 28px !important;
+      height: 28px !important;
+    }
+  
+    /* Bouton flottant du chat */
+    .chat-fab {
+      width: 48px !important;
+      height: 48px !important;
+      bottom: 16px !important;
+      right: 16px !important;
+    }
+    .chat-fab svg {
+      width: 18px !important;
+      height: 18px !important;
+    }
+  
+    /* Tableaux (historique) */
+    .table-head,
+    .table-row {
+      grid-template-columns: 1fr !important; /* empile les colonnes si besoin */
+      gap: 6px !important;
+      padding: 8px 0 !important;
+    }
+    .table-head {
+      display: none !important; /* cache l'en-tête sur mobile, on affiche les données en blocs */
+    }
+    .table-row {
+      border-bottom: 2px solid var(--border-light) !important;
+      padding: 10px !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
+      justify-content: space-between !important;
+    }
+    .table-row > * {
+      flex: 1 1 100% !important;
+      margin-bottom: 4px !important;
+    }
+    .table-row .avatar-sm {
+      display: none !important; /* ou l'afficher en petit */
+    }
+  
+    /* Divers */
+    .topbar {
+      flex-wrap: wrap !important;
+      height: auto !important;
+      padding: 8px 12px !important;
+    }
+    .search {
+      max-width: 100% !important;
+      order: 10 !important;
+      flex-basis: 100% !important;
+    }
+    .topbar-actions {
+      flex-wrap: wrap !important;
+      gap: 6px !important;
+    }
+    .demo-tag {
+      display: none !important;
+    }
+    .role-switch {
+      font-size: 8px !important;
+    }
+    .role-switch a {
+      padding: 2px 8px !important;
+    }
+  }
+  
+  /* --- Ajustements pour les très grands écrans (optionnel) --- */
+  @media (min-width: 1400px) {
+    .container {
+      max-width: 1320px !important;
+    }
+  }
+
+  /* Pour AutocompleteSelect */
+@media (max-width: 480px) {
+    .autocomplete-dropdown {
+      left: -10px !important;
+      right: -10px !important;
+      width: calc(100% + 20px) !important;
+      border-radius: 12px !important;
+    }
+  }
+  
+  /* Pour ChatBox */
+  .chat-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    border: 1px dashed rgba(255,255,255,0.25);
+    background: #02457A;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 26px rgba(2, 69, 122, 0.4);
+    cursor: pointer;
+    z-index: 1000;
+    animation: upark-chat-pulse 2.4s ease-out infinite;
+  }
+  .chat-box-popup {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 330px;
+    max-height: 460px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 16px 44px rgba(2, 69, 122, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+    border: 1px solid #e3e7f0;
+  }
+  
+  @media (max-width: 480px) {
+    .chat-fab {
+      bottom: 16px;
+      right: 16px;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+    }
+    .chat-box-popup {
+      bottom: 76px;
+      right: 10px;
+      width: calc(100% - 20px);
+      max-height: 70vh;
+      border-radius: 16px;
+    }
+  }
+
+  /* ============================================================
+   Améliorations responsives pour Navbar et Footer
+   ============================================================ */
+
+/* Footer sur mobile */
+@media (max-width: 480px) {
+    .app-footer {
+      padding: 12px 16px !important;
+      font-size: 0.7rem !important;
+    }
+    .app-footer-links {
+      flex-direction: column !important;
+      gap: 4px !important;
+    }
+    .app-footer-links a {
+      display: inline-block !important;
+      padding: 4px 0 !important;
+    }
+    .footer-copy {
+      margin-bottom: 6px !important;
+    }
+  }
+  
+  /* Sidebar : amélioration pour très petits écrans */
+  @media (max-width: 420px) {
+    .sidebar .nav a .nav-label {
+      display: none !important;
+    }
+    .sidebar .nav a {
+      padding: 6px 8px !important;
+    }
+    .sidebar .nav a svg {
+      width: 18px !important;
+      height: 18px !important;
+    }
+    .sidebar .bottom .logout .logout-label {
+      display: none !important;
+    }
+    .sidebar .bottom .avatar {
+      width: 28px !important;
+      height: 28px !important;
+      font-size: 10px !important;
+    }
+  }
+
+  /* Transition douce pour la sidebar sur mobile */
+.sidebar {
+    transition: height 0.2s ease, padding 0.2s ease;
+  }
+  
+  /* Effet de survol des icônes sur mobile */
+  @media (max-width: 768px) {
+    .sidebar .nav a:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.05);
+    }
+  }

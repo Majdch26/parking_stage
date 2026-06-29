@@ -71,6 +71,7 @@ export default function AutocompleteSelect({
 
       {isOpen && !disabled && (
         <div
+          className="autocomplete-dropdown"
           style={{
             position: "absolute",
             top: "calc(100% + 6px)",

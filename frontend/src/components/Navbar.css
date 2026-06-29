@@ -6,7 +6,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #F0F4F8; /* fond de page uniforme */
+  background: #F0F4F8;
 }
 
 /* ===== SIDEBAR – fond #02457A, texte blanc ===== */
@@ -18,7 +18,7 @@
   top: 0;
   left: 0;
   z-index: 1000;
-  background: #02457A;          /* bleu profond */
+  background: #02457A;
   display: flex;
   flex-direction: column;
   padding: 24px 16px 20px;
@@ -177,7 +177,7 @@
   white-space: nowrap;
 }
 
-/* ===== Responsive : sur mobile, la sidebar passe en barre inférieure ===== */
+/* ===== RESPONSIVE : sur mobile, la sidebar passe en barre inférieure ===== */
 @media (max-width: 768px) {
   .app-shell {
     margin-left: 0;
@@ -192,66 +192,147 @@
     left: 0;
     flex-direction: row;
     align-items: center;
-    padding: 0 12px;
+    padding: 0 8px;
     overflow-x: auto;
     overflow-y: hidden;
-    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.12);
     border-right: none;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: #02457A;
+    justify-content: space-between;
   }
 
+  /* Masquer le logo sur mobile */
   .sidebar .logo {
-    margin-bottom: 0;
-    margin-right: 12px;
-    flex-shrink: 0;
+    display: none;
   }
 
-  .sidebar .logo .logo-text {
-    display: none; /* cache le texte sur mobile pour gagner de la place */
-  }
-
+  /* Navigation en ligne */
   .sidebar .nav {
     flex-direction: row;
     flex: 1;
-    gap: 4px;
+    gap: 2px;
+    align-items: center;
+    overflow-x: auto;
+    padding: 0 4px;
   }
 
   .sidebar .nav a,
   .sidebar .nav-bell button {
-    padding: 6px 10px;
     flex-direction: column;
     gap: 2px;
+    padding: 6px 10px;
     font-size: 10px;
+    border-radius: 8px;
+    min-width: 48px;
+    align-items: center;
+    justify-content: center;
   }
 
+  /* Masquer le texte des liens */
   .sidebar .nav a .nav-label {
-    font-size: 8px;
-    white-space: nowrap;
+    display: none;
   }
 
+  /* Afficher seulement l'icône */
+  .sidebar .nav a svg {
+    width: 22px;
+    height: 22px;
+    margin: 0;
+  }
+
+  /* Indicateur actif : remplacer la barre latérale par une pastille en bas */
   .sidebar .nav a.active::before {
     left: 50%;
-    top: -2px;
+    top: auto;
+    bottom: -4px;
     transform: translateX(-50%);
     width: 18px;
     height: 3px;
+    border-radius: 3px;
+    background: #018ABE;
+    box-shadow: 0 0 12px rgba(1, 138, 190, 0.6);
   }
 
+  .sidebar .nav a.active {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Cloche de notification intégrée à la barre */
   .sidebar .nav-bell {
     margin-top: 0;
     padding-top: 0;
     border-top: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
     padding-left: 8px;
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
   }
 
+  .sidebar .nav-bell button {
+    padding: 6px 8px;
+    min-width: auto;
+  }
+
+  /* Pied de sidebar : avatar + déconnexion (sans texte) */
   .sidebar .bottom {
     margin-top: 0;
     flex-direction: row;
-    margin-left: 8px;
+    gap: 4px;
+    padding-top: 0;
+    border-top: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding-left: 8px;
+    margin-left: 4px;
+    align-items: center;
+  }
+
+  .sidebar .bottom .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    border-radius: 8px;
   }
 
   .sidebar .bottom .logout .logout-label {
-    display: none; /* cache le texte sur mobile */
+    display: none;
+  }
+
+  .sidebar .bottom .logout {
+    padding: 4px 8px;
+  }
+
+  .sidebar .bottom .logout svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Pour les très petits écrans (moins de 400px) : réduire encore */
+@media (max-width: 400px) {
+  .sidebar {
+    height: 58px;
+    padding: 0 4px;
+  }
+  .sidebar .nav a {
+    padding: 4px 6px;
+    min-width: 38px;
+  }
+  .sidebar .nav a svg {
+    width: 18px;
+    height: 18px;
+  }
+  .sidebar .nav-bell button {
+    padding: 4px 6px;
+  }
+  .sidebar .bottom .avatar {
+    width: 26px;
+    height: 26px;
+    font-size: 10px;
+  }
+  .sidebar .bottom .logout svg {
+    width: 16px;
+    height: 16px;
   }
 }

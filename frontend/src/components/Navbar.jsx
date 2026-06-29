@@ -86,7 +86,7 @@ export default function Navbar() {
 
   return (
     <aside className="sidebar">
-      {/* Logo */}
+      {/* Logo - visible uniquement sur desktop, sur mobile il est masqué par CSS */}
       <Link to="/dashboard" className="logo" title="UPark">
         <svg viewBox="0 0 48 48">
           <path

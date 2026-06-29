@@ -59,55 +59,21 @@ export default function ChatBox() {
         }
       `}</style>
 
-      {/* Bouton flottant – fond #02457A */}
+      {/* Bouton flottant */}
       <button
         onClick={() => setOpen((o) => !o)}
+        className="chat-fab"
         aria-label="Ouvrir l'aide rapide"
-        style={{
-          position: "fixed",
-          bottom: "24px",
-          right: "24px",
-          width: "56px",
-          height: "56px",
-          borderRadius: "16px",
-          border: "1px dashed rgba(255,255,255,0.25)",
-          background: "#02457A", // ← nouvelle couleur
-          color: "white",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 10px 26px rgba(2, 69, 122, 0.4)",
-          cursor: "pointer",
-          zIndex: 1000,
-          animation: open ? "none" : "upark-chat-pulse 2.4s ease-out infinite",
-        }}
       >
         {open ? <X size={22} /> : <MessageCircle size={22} color="#fff" />}
       </button>
 
       {open && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "90px",
-            right: "24px",
-            width: "330px",
-            maxHeight: "460px",
-            background: "#ffffff",
-            borderRadius: "18px",
-            boxShadow: "0 16px 44px rgba(2, 69, 122, 0.2)",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-            zIndex: 1000,
-            fontFamily: "'Inter', sans-serif",
-            border: "1px solid #e3e7f0",
-          }}
-        >
-          {/* Header – fond #02457A */}
+        <div className="chat-box-popup">
+          {/* Header */}
           <div
             style={{
-              background: "#02457A", // ← nouvelle couleur
+              background: "#02457A",
               color: "white",
               padding: "16px 16px",
               display: "flex",
@@ -130,7 +96,7 @@ export default function ChatBox() {
                 width: 30,
                 height: 30,
                 borderRadius: 9,
-                background: "linear-gradient(145deg, #02457A, #018ABE)", // ← dégradé avec les deux couleurs
+                background: "linear-gradient(145deg, #02457A, #018ABE)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -168,7 +134,7 @@ export default function ChatBox() {
                 style={{
                   alignSelf: m.from === "bot" ? "flex-start" : "flex-end",
                   maxWidth: "85%",
-                  background: m.from === "bot" ? "#ffffff" : "#02457A", // ← messages utilisateur en #02457A
+                  background: m.from === "bot" ? "#ffffff" : "#02457A",
                   color: m.from === "bot" ? "#10172a" : "white",
                   padding: "9px 13px",
                   borderRadius: m.from === "bot" ? "12px 12px 12px 4px" : "12px 12px 4px 12px",
@@ -204,7 +170,7 @@ export default function ChatBox() {
             <div ref={bottomRef} />
           </div>
 
-          {/* Formulaire d'envoi – bouton #02457A */}
+          {/* Formulaire */}
           <form
             onSubmit={handleSubmit}
             style={{
@@ -236,7 +202,7 @@ export default function ChatBox() {
               disabled={loading}
               style={{
                 border: "none",
-                background: "#02457A", // ← nouvelle couleur
+                background: "#02457A",
                 color: "white",
                 borderRadius: "30px",
                 width: "38px",
