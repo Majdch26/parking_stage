@@ -12,47 +12,62 @@ namespace ParkingUniversitySystem.Controllers
     public class WorkerChatController : ControllerBase
     {
         private readonly IWorkerChatEngine _chatEngine;
+        private readonly ILogger<WorkerChatController> _logger;
 
-        public WorkerChatController(IWorkerChatEngine chatEngine)
+        public WorkerChatController(IWorkerChatEngine chatEngine, ILogger<WorkerChatController> logger)
         {
             _chatEngine = chatEngine;
+            _logger = logger;
         }
 
-        /// <summary>GET /WorkerChat/messages -- the last 100 messages, oldest first.</summary>
         [HttpGet("messages")]
         public async Task<IActionResult> GetMessages()
         {
-            var messages = await _chatEngine.GetRecentAsync();
-            return Ok(messages);
+            try
+            {
+                var messages = await _chatEngine.GetRecentAsync();
+                return Ok(messages);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur dans GetMessages");
+                return StatusCode(500, new { message = "Erreur interne : " + ex.Message });
+            }
         }
 
-        /// <summary>GET /WorkerChat/messages/since/{afterId} -- cheap polling: only new messages.</summary>
         [HttpGet("messages/since/{afterId:int}")]
-public async Task<IActionResult> GetSince(int afterId)
-{
-    try
-    {
-        var messages = await _chatEngine.GetSinceAsync(afterId);
-        return Ok(messages);
-    }
-    catch (Exception ex)
-    {
-        // Loggez l'exception (par ex. avec ILogger)
-        return StatusCode(500, new { message = "Erreur interne : " + ex.Message });
-    }
-}
+        public async Task<IActionResult> GetSince(int afterId)
+        {
+            try
+            {
+                var messages = await _chatEngine.GetSinceAsync(afterId);
+                return Ok(messages);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur dans GetSince");
+                return StatusCode(500, new { message = "Erreur interne : " + ex.Message });
+            }
+        }
 
-        /// <summary>POST /WorkerChat/messages -- send a message to the shared worker group chat.</summary>
         [HttpPost("messages")]
         public async Task<IActionResult> SendMessage([FromBody] SendWorkerChatMessageRequest request)
         {
-            var senderId = GetUserId();
-            if (senderId is null) return Unauthorized();
+            try
+            {
+                var senderId = GetUserId();
+                if (senderId is null) return Unauthorized();
 
-            var (success, errorMessage) = await _chatEngine.SendAsync(senderId.Value, request.Message);
-            if (!success) return BadRequest(new { message = errorMessage });
+                var (success, errorMessage) = await _chatEngine.SendAsync(senderId.Value, request.Message);
+                if (!success) return BadRequest(new { message = errorMessage });
 
-            return Ok(new { message = "Sent." });
+                return Ok(new { message = "Sent." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur dans SendMessage");
+                return StatusCode(500, new { message = "Erreur interne : " + ex.Message });
+            }
         }
 
         private int? GetUserId()
