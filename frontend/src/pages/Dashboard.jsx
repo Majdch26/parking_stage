@@ -526,10 +526,13 @@ export default function Dashboard() {
 
                 {parkingAreas === null ? (
                   <p style={{ color: "rgba(255,255,255,0.6)", margin: 0, fontSize: "0.85rem" }}>Loading...</p>
-                ) : parkingAreas.length === 0 ? (
+                ) : parkingAreas.filter((a) => a.areaName?.trim().toLowerCase() !== "gate").length === 0 ? (
                   <p style={{ color: "rgba(255,255,255,0.6)", margin: 0, fontSize: "0.85rem" }}>No zones registered yet.</p>
                 ) : (
-                  parkingAreas.slice(0, 2).map((a) => {
+                  parkingAreas
+                    .filter((a) => a.areaName?.trim().toLowerCase() !== "gate")
+                    .slice(0, 2)
+                    .map((a) => {
                     const mySlot = mySession?.areaName === a.areaName ? mySession.slotNumber : null;
                     const bays = [
                       ...(mySlot ? ["mine"] : []),

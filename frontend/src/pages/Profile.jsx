@@ -84,9 +84,11 @@ export default function Profile() {
             <p style={{ color: "#4a5568", marginBottom: "20px" }}>{me.email}</p>
 
             <div className="d-flex justify-content-center gap-2 mb-4">
-              <Badge color="secondary" pill>{me.role}</Badge>
+              <Badge className="upk-pill-info" pill>
+                {me.role?.charAt(0).toUpperCase() + me.role?.slice(1)}
+              </Badge>
               {isStudent && (
-                <Badge color={isBlocked ? "danger" : "success"} pill>
+                <Badge className={isBlocked ? "upk-pill-danger" : "upk-pill-success"} pill>
                   {isBlocked ? "Blocked" : "Active"}
                 </Badge>
               )}
@@ -96,7 +98,7 @@ export default function Profile() {
               <>
                 <div className="mb-4">
                   <strong>Violation points: </strong>
-                  <span style={{ color: me.points >= 100 ? "red" : me.points >= 50 ? "orange" : "green" }}>
+                  <span style={{ color: me.points >= 100 ? "#C8313D" : me.points >= 50 ? "#B9790A" : "#0E9D6B", fontWeight: 700 }}>
                     {me.points} / 100
                   </span>
                 </div>

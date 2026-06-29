@@ -184,7 +184,10 @@ export default function ParkingStatus() {
   const totalFree = Object.values(slotsByArea).flat().filter((s) => s.status === "available").length;
   const totalOcc = Object.values(slotsByArea).flat().filter((s) => s.status === "occupied").length;
   const totalRes = Object.values(slotsByArea).flat().filter((s) => s.status === "reserved").length;
-  const isLotFull = areas.length > 0 && areas.every((a) => a.availableSlots === 0);
+  // "Gate" est une zone technique (utilisée pour l'affectation des workers),
+  // ce n'est pas une zone de stationnement : on ne l'affiche jamais ici.
+  const visibleAreas = areas.filter((a) => a.areaName?.trim().toLowerCase() !== "gate");
+  const isLotFull = visibleAreas.length > 0 && visibleAreas.every((a) => a.availableSlots === 0);
 
   return (
     <AppLayout>
@@ -251,10 +254,10 @@ export default function ParkingStatus() {
           <LegendItem color={T.red} label="Maintenance" />
         </div>
 
-        {areas.length === 0 ? (
+        {visibleAreas.length === 0 ? (
           <p style={{ color: T.muted }}>Loading...</p>
         ) : (
-          areas.map((area) => {
+          visibleAreas.map((area) => {
             const slots = slotsByArea[area.id] || [];
             const free = slots.filter((s) => s.status === "available").length;
             return (

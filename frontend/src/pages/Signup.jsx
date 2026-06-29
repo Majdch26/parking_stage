@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Alert } from "reactstrap";
+import { Eye, EyeOff, GraduationCap, Wrench } from "lucide-react";
 import axiosClient from "../api/axiosClient";
 import AuthBrandPanel from "../components/AuthBrandPanel";
 import AutocompleteSelect from "../components/AutocompleteSelect";
@@ -22,7 +23,15 @@ export default function Signup() {
   const [brands, setBrands] = useState([]);
   const [models, setModels] = useState([]);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  // L'ID universitaire indique le rôle par son préfixe : S1001 = student, W2002 = worker.
+  // Détecté automatiquement pendant la saisie, pas besoin de role-pick.
+  const idPrefix = form.storedId.trim().charAt(0).toUpperCase();
+  const detectedRole = idPrefix === "W" ? "worker" : idPrefix === "S" ? "student" : "";
+  const isStudentRole = detectedRole === "student";
+  const isWorkerRole = detectedRole === "worker";
 
   useEffect(() => {
     axiosClient.get("/Vehicle/brands").then((res) => setBrands(res.data));
@@ -48,7 +57,12 @@ export default function Signup() {
     e.preventDefault();
     setError("");
 
-    if (!form.brandId || !form.modelId) {
+    if (!detectedRole) {
+      setError("Your university ID should start with S (student) or W (worker).");
+      return;
+    }
+
+    if (isStudentRole && (!form.brandId || !form.modelId)) {
       setError("Please choose a brand and a model from the suggestions.");
       return;
     }
@@ -60,11 +74,13 @@ export default function Signup() {
         LastName: form.lastName,
         Email: form.email,
         Password: form.password,
-        Role: "student", // toujours étudiant
-        ModelId: Number(form.modelId),
-        PlateNumber: form.plateNumber,
-        Year: form.year ? Number(form.year) : null,
-        Color: form.color || null,
+        Role: detectedRole,
+        ...(isStudentRole && {
+          ModelId: Number(form.modelId),
+          PlateNumber: form.plateNumber,
+          Year: form.year ? Number(form.year) : null,
+          Color: form.color || null,
+        }),
       };
 
       await axiosClient.post("/Auth/signup", payload);
@@ -92,8 +108,6 @@ export default function Signup() {
               </Alert>
             )}
 
-            {/* Pas de role-pick ici — tout le monde est étudiant */}
-
             <div className="field">
               <label htmlFor="storedId">University ID</label>
               <div className="field-input">
@@ -104,11 +118,31 @@ export default function Signup() {
                 <input
                   id="storedId"
                   name="storedId"
+                  placeholder="e.g. S1001 or W2002"
                   value={form.storedId}
                   onChange={handleChange}
                   required
                 />
               </div>
+
+              {/* Pastille indiquant le rôle détecté automatiquement à partir du préfixe */}
+              {form.storedId.trim() !== "" && (
+                <div
+                  className={`role-detect-pill ${detectedRole ? `is-${detectedRole}` : "is-unknown"}`}
+                >
+                  {isStudentRole && (
+                    <>
+                      <GraduationCap size={14} /> Detected as <strong>Student</strong> account
+                    </>
+                  )}
+                  {isWorkerRole && (
+                    <>
+                      <Wrench size={14} /> Detected as <strong>Worker</strong> account
+                    </>
+                  )}
+                  {!detectedRole && "ID should start with S (student) or W (worker)."}
+                </div>
+              )}
             </div>
 
             <div className="field">
@@ -173,80 +207,100 @@ export default function Signup() {
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={form.password}
                   onChange={handleChange}
                   required
                 />
+                <button
+                  type="button"
+                  className="field-eye-toggle"
+                  onClick={() => setShowPassword((s) => !s)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
               </div>
             </div>
 
-            {/* Champs véhicule (obligatoires) */}
-            <div className="field">
-              <label>Brand</label>
-              <AutocompleteSelect
-                options={brands.map((b) => ({ id: b.id, label: b.name }))}
-                value={form.brandId}
-                onChange={(brandId) => setForm({ ...form, brandId })}
-                placeholder="Type to search a brand..."
-                emptyMessage="No brand found."
-              />
-            </div>
+            {/* Champs véhicule : uniquement pour un compte étudiant détecté */}
+            {isStudentRole && (
+              <>
+                <div className="field">
+                  <label>Brand</label>
+                  <AutocompleteSelect
+                    options={brands.map((b) => ({ id: b.id, label: b.name }))}
+                    value={form.brandId}
+                    onChange={(brandId) => setForm({ ...form, brandId })}
+                    placeholder="Type to search a brand..."
+                    emptyMessage="No brand found."
+                  />
+                </div>
 
-            <div className="field">
-              <label>Model</label>
-              <AutocompleteSelect
-                options={models.map((m) => ({ id: m.id, label: `${m.name} (${m.vehicleTypeName})` }))}
-                value={form.modelId}
-                onChange={(modelId) => setForm({ ...form, modelId })}
-                placeholder={form.brandId ? "Type to search a model..." : "Choose a brand first"}
-                disabled={!form.brandId}
-                emptyMessage="No model found."
-              />
-            </div>
+                <div className="field">
+                  <label>Model</label>
+                  <AutocompleteSelect
+                    options={models.map((m) => ({ id: m.id, label: `${m.name} (${m.vehicleTypeName})` }))}
+                    value={form.modelId}
+                    onChange={(modelId) => setForm({ ...form, modelId })}
+                    placeholder={form.brandId ? "Type to search a model..." : "Choose a brand first"}
+                    disabled={!form.brandId}
+                    emptyMessage="No model found."
+                  />
+                </div>
 
-            <div className="field">
-              <label htmlFor="plateNumber">License plate</label>
-              <div className="field-input">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="2" y="6" width="20" height="12" rx="2" />
-                  <path d="M6 6V4h12v2" />
-                </svg>
-                <input
-                  id="plateNumber"
-                  name="plateNumber"
-                  value={form.plateNumber}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
+                <div className="field">
+                  <label htmlFor="plateNumber">License plate</label>
+                  <div className="field-input">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="6" width="20" height="12" rx="2" />
+                      <path d="M6 6V4h12v2" />
+                    </svg>
+                    <input
+                      id="plateNumber"
+                      name="plateNumber"
+                      value={form.plateNumber}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
 
-            <div className="field">
-              <label htmlFor="year">Year (optional)</label>
-              <div className="field-input">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" />
-                  <path d="M3 10h18M8 2v4M16 2v4" />
-                </svg>
-                <select id="year" name="year" value={form.year} onChange={handleChange}>
-                  <option value="">-- Select a year --</option>
-                  {Array.from({ length: 35 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                    <option key={y} value={y}>{y}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+                <div className="field">
+                  <label htmlFor="year">Year (optional)</label>
+                  <div className="field-input">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" />
+                      <path d="M3 10h18M8 2v4M16 2v4" />
+                    </svg>
+                    <select id="year" name="year" value={form.year} onChange={handleChange}>
+                      <option value="">-- Select a year --</option>
+                      {Array.from({ length: 35 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                        <option key={y} value={y}>{y}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-            <div className="field">
-              <label htmlFor="color">Color (optional)</label>
-              <div className="field-input">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                </svg>
-                <input id="color" name="color" value={form.color} onChange={handleChange} />
-              </div>
-            </div>
+                <div className="field">
+                  <label htmlFor="color">Color (optional)</label>
+                  <div className="field-input">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                    </svg>
+                    <input id="color" name="color" value={form.color} onChange={handleChange} />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {isWorkerRole && (
+              <p className="worker-note">
+                No vehicle registration needed for worker accounts — you'll get access to
+                check-in, assistance and zone tools once your account is created.
+              </p>
+            )}
 
             <button type="submit" className="btn btn-primary btn-block">
               Sign Up →

@@ -42,7 +42,7 @@ export default function WorkerZones() {
             <Card key={z.areaId} className="mb-2 upk-card">
               <CardBody className="d-flex justify-content-between align-items-center">
                 <strong style={{ color: "#11163D" }}>{z.areaName}</strong>
-                <Badge color={z.isCovered ? "secondary" : "success"} style={{ background: z.isCovered ? "#6B7280" : "#16a34a" }}>
+                <Badge className={z.isCovered ? "upk-pill-neutral" : "upk-pill-success"} pill>
                   {z.isCovered ? "Covered" : "Available"}
                 </Badge>
               </CardBody>

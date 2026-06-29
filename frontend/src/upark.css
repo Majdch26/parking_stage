@@ -502,6 +502,54 @@
   }
 }
 
+/* ============================================================
+   Pastilles de statut (badges) — cohérence visuelle
+   Avant : badges Bootstrap pleins (fond saturé, ex. vert vif) avec
+   un texte qui ne s'accordait pas bien avec le reste du thème clair.
+   Maintenant : fond pastel + texte de la même teinte, plus doux et
+   cohérent avec les cartes "violation"/"session" qui utilisent déjà
+   ce principe (green-soft, red-soft, amber-soft...).
+   S'applique automatiquement à tous les <Badge color="..."> Reactstrap
+   existants (badge bg-success/bg-danger/...), et aussi disponible en
+   className direct (upk-pill-success, etc.) pour du code neuf.
+   ============================================================ */
+.badge.bg-success,
+.upk-pill-success {
+  background: var(--green-soft) !important;
+  color: #0E9D6B !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(54, 211, 153, 0.25);
+}
+.badge.bg-danger,
+.upk-pill-danger {
+  background: var(--red-soft) !important;
+  color: #C8313D !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(242, 92, 102, 0.25);
+}
+.badge.bg-warning,
+.upk-pill-warning {
+  background: var(--amber-soft) !important;
+  color: #B9790A !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(245, 184, 61, 0.3);
+}
+.badge.bg-secondary,
+.upk-pill-neutral {
+  background: var(--border-light) !important;
+  color: var(--text-secondary) !important;
+  font-weight: 700 !important;
+  border: 1px solid var(--border);
+}
+.badge.bg-info,
+.badge.bg-primary,
+.upk-pill-info {
+  background: var(--blue-soft) !important;
+  color: var(--accent-deep) !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(1, 138, 190, 0.25);
+}
+
 .upk-parking-card {
     background: #FFFFFF  !important;
     border: none !important;
